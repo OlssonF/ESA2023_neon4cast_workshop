@@ -28,11 +28,17 @@ Make sure to restart your R session after installing any new packages!
 ### 2. Fork or clone the Github repository or download the code
 There are 3 options for getting the code locally so that you can run it, depending on your experience with Github/Git you can do one of the following 
 
-- Fork the repository to your Github and then clone the repository from your Github repository to a local RStudio project. This will allow you to modify the scripts and push it back to your Github. 
+1. Fork the repository to your Github and then clone the repository from your Github repository to a local RStudio project. This will allow you to modify the scripts and push it back to your Github. 
+
+- Find the fork button in the top left of the webpage --> Create Fork. 
+- Then use the <> Code button to copy the HTTPS link. 
+- In RStudio go to New Project --> Version Control --> Git. 
+- Paste the HTTPS link in the Repository URL space, and choose a suitable location for your local repository --> Create Project. 
+
+2. Clone the workshop repository to a local RStudio project. Your local workspace will be set up and you can commit changes locally but they won't be pushed back to the Github repository.
 Find the fork button in the top left of the webpage --> Create Fork. Then use the <> Code button to copy the HTTPS link. In RStudio go to New Project --> Version Control --> Git. Paste the HTTPS link in the Repository URL space, and choose a suitable location for your local repository --> Create Project. 
-- Clone the workshop repository to a local RStudio project. Your local workspace will be set up and you can commit changes locally but they won't be pushed back to the Github repository.
-Find the fork button in the top left of the webpage --> Create Fork. Then use the <> Code button to copy the HTTPS link. In RStudio go to New Project --> Version Control --> Git. Paste the HTTPS link in the Repository URL space, and choose a suitable location for your local repository --> Create Project. 
-- Download the zip file of the repository code. Find the <> Code button --> Download ZIP. Unzip this to a location on your PC and open the `ESA2023_neon4cast_workshop.Rproj` file in RStudio. You can save changes (without version control) locally.
+
+3. Download the zip file of the repository code. Find the <> Code button --> Download ZIP. Unzip this to a location on your PC and open the `ESA2023_neon4cast_workshop.Rproj` file in RStudio. You can save changes (without version control) locally.
 
 More information on forking and cloning in R can be found at [happygitwithr](https://happygitwithr.com/fork-and-clone.html), a great resource to get you started using version control with R. 
 
