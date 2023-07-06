@@ -33,14 +33,17 @@
     -   <a href="#tasks" id="toc-tasks">5.3 TASKS</a>
     -   <a href="#register-your-participation"
         id="toc-register-your-participation">5.4 Register your participation</a>
+    -   <a href="#automate-your-forecasts" id="toc-automate-your-forecasts">5.5
+        Automate your forecasts!</a>
+    -   <a href="#see-how-your-forecasts-perform"
+        id="toc-see-how-your-forecasts-perform">5.6 See how your forecasts
+        perform</a>
 
 # 1 This R markdown document
 
-This document present workshop materials initially presented in the
-Forecast Challenge part of the GLEON2022 workshop “Introduction to
-real-time lake forecasting: learn, teach, and generate forecasts with
-Macrosystems EDDIE modules and the NEON Forecasting Challenge.” The
-materials have been modified slightly for use in additional workshops.
+This document present workshop materials presented at the ESA 2023
+workshop “Can You Predict the Future? Introducing the NEON Ecological
+Forecasting Challenge.”
 
 To complete the workshop via this markdown document the following
 packages will need to be installed:
@@ -63,7 +66,7 @@ install.packages('lubridate') # working with dates and times
 remotes::install_github('eco4cast/neon4cast') # package from NEON4cast challenge organisers to assist with forecast building and submission
 ```
 
-Additionally, R version 4.2 is required to run the neon4cast package.
+Additionally, R version 4.2 is required to run the `neon4cast` package.
 It’s also worth checking your Rtools is up to date and compatible with R
 4.2, see
 (<https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html>).
@@ -112,9 +115,8 @@ library(lubridate)
 ```
 
 If you do not wish to run the code yourself you can follow along via the
-html (NEON_forecast_challenge_workshop.md), which can be downloaded from
-the [Github
-repository](https://github.com/OlssonF/NEON-forecast-challenge-workshop).
+rendered markdown document
+(NEON_forecast_challenge_workshop_terrestrial.md).
 
 # 2 Introduction to NEON forecast challenge
 
@@ -236,16 +238,16 @@ targets <- targets |>
 
 ![Figure: Targets data at terrestrial sites provided by EFI for the NEON
 forecasting
-challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-7-1.png)![Figure:
+challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/targets-1.png)![Figure:
 Targets data at terrestrial sites provided by EFI for the NEON
 forecasting
-challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-7-2.png)![Figure:
+challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/targets-2.png)![Figure:
 Targets data at terrestrial sites provided by EFI for the NEON
 forecasting
-challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-7-3.png)![Figure:
+challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/targets-3.png)![Figure:
 Targets data at terrestrial sites provided by EFI for the NEON
 forecasting
-challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-7-4.png)
+challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/targets-4.png)
 
 We can think about what type of models might be useful to predict these
 variables at these sites. Below are descriptions of three simple models
@@ -253,22 +255,22 @@ which have been constructed to get you started forecasting:
 
 -   We could use information about recent conditions to predict the
     future. What is happening today is usually a good predictor of what
-    will happen tomorrow
--   We could also look at the variable’s relationship(s) with other
-    variables. Could we use existing forecasts about the weather to
-    generate forecasts about terrestrial fluxes
+    will happen tomorrow.
 -   And we could think about what the historic data tells us about this
     time of year. Is this time of year likely to be similar the same
-    period last year
+    period last year?
+-   We could also look at the variable’s relationship(s) with other
+    variables. Could we use existing forecasts about the weather to
+    generate forecasts about terrestrial fluxes?
 
 # 4 Introducing co-variates
 
 One important step to overcome when thinking about generating forecasts
-is to include co-variates in the model. A forecast of NEE, for example,
-may be benefit from information about past and future weather. The
-neon4cast challenge package includes functions for downloading past and
-future NOAA weather forecasts for all of the NEON sites. The 3 types of
-data are as follows:
+is how to include co-variates in the model. A forecast of NEE, for
+example, may be benefit from information about past and future weather.
+The `neon4cast` challenge package includes functions for downloading
+past and future NOAA weather forecasts for all of the NEON sites. The 3
+types of data are as follows:
 
 -   stage_1: raw forecasts - 31 member ensemble forecasts at 3 hr
     intervals for the first 10 days, and 6 hr intervals for up to 35
@@ -309,7 +311,7 @@ targets |>
   geom_point()
 ```
 
-![](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/HARV-1.png)
 
 ``` r
 example_site <- 'HARV'
@@ -461,9 +463,9 @@ Now we have a timeseries of historic data and a 30 member ensemble
 forecast of future air temperatures and shortwave for one site.
 
 ![Figure: historic and future NOAA air temeprature forecasts for 1 NEON
-site](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-13-1.png)![Figure:
+site](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/NOAA-HARV-1.png)![Figure:
 historic and future NOAA shortwave forecasts for 1 NEON
-site](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-13-2.png)
+site](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/NOAA-HARV-2.png)
 
 # 5 Model 1: Linear model with covariates
 
@@ -480,9 +482,11 @@ aid in fitting the linear model.
 ``` r
 targets_lm_example <- targets |> 
   filter(site_id %in% example_site) |> 
-  pivot_wider(names_from = 'variable', values_from = 'observation') |> 
+  pivot_wider(names_from = 'variable', 
+              values_from = 'observation') |> 
   left_join(noaa_past_mean_example, 
             by = c("datetime","site_id"))
+
 tail(targets_lm_example)
 ```
 
@@ -516,7 +520,7 @@ forecasted_nee <- fit$coefficients[1] +
 
 ``` r
   # put all the relevent information into a tibble that we can bind together
-  NEE <- tibble(datetime = noaa_future_daily_example$datetime,
+  NEE <- data.frame(datetime = noaa_future_daily_example$datetime,
                         site_id = "HARV",
                         parameter = noaa_future_daily_example$parameter,
                         prediction = forecasted_nee,
@@ -526,10 +530,10 @@ forecasted_nee <- fit$coefficients[1] +
     geom_line()
 ```
 
-![](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/example-forecast-1.png)
 
 ``` r
-  #Some edits would be needed to submit to the challenge... see commented code
+  # Some edits would be needed to submit to the challenge... see commented code
   
   #   my_model_id <- 'nee_test'
   # 
@@ -541,13 +545,15 @@ forecasted_nee <- fit$coefficients[1] +
   # select(model_id, datetime, reference_datetime, site_id, family, parameter, variable, prediction)
 ```
 
+A forecast!!
+
 We can loop through this workflow for each site to create a site-wise
 forecast of NEE based on a linear model and each forecasted air
 temperature and shortwave. We can run this forecast for each site and
 then bind them together to submit as one forecast.
 
 1.  Download historic NOAA data
-2.  Download future NOAA
+2.  Download future NOAA forecast
 3.  Fit the model
 4.  Forecast!
 5.  Bind this all together…
@@ -579,12 +585,13 @@ df_future <- neon4cast::noaa_stage2()
 # specify the covariates
 variables <- c("air_temperature", "surface_downwelling_shortwave_flux_in_air")
 
+# create some empty objects to assign things to
 lm_forecast <- NULL
 model_fit <- NULL
 
 loop_sites <- 1:5 #1:length(site_data$field_site_id)
 
-## Stash NOAA locally:
+## Stash NOAA locally. This will speed up the access to NOAA by writing a local copy that we query
 df_past |> 
     dplyr::filter(datetime >= ymd('2017-01-01'),
                   variable %in% variables) |> 
@@ -603,7 +610,7 @@ for(i in 1:length(site_data$field_site_id)) {
   
   site <- site_data$field_site_id[i]
   
-  # 1. Download historic NOAA data
+  # 1. Get historic NOAA data
   noaa_past <- arrow::open_dataset("noaa_past") |> 
     dplyr::filter(site_id %in% site,
                   datetime >= ymd('2017-01-01'),
@@ -620,10 +627,10 @@ for(i in 1:length(site_data$field_site_id)) {
     rename(shortwave = surface_downwelling_shortwave_flux_in_air) |> 
     mutate(air_temperature = air_temperature - 273.15)
   
-  message('Stage 3 for ', site)
+  # message('Stage 3 for ', site)
 
   
-  #2. Download future NOAA data
+  #2. Get future NOAA data
   # Download the stage2 data
   noaa_future <- arrow::open_dataset("noaa_future") |> 
     dplyr::filter(reference_datetime == noaa_date,
@@ -646,7 +653,7 @@ for(i in 1:length(site_data$field_site_id)) {
     rename(shortwave = surface_downwelling_shortwave_flux_in_air) |> 
     select(datetime, site_id, air_temperature, shortwave, parameter)
   
-   message('Stage 2 for ', site)
+   # message('Stage 2 for ', site)
   
   #3. Fit the model
     # targets data reformatted to aid model fitting
@@ -685,285 +692,97 @@ for(i in 1:length(site_data$field_site_id)) {
 }
 ```
 
-    ## Stage 3 for ABBY
-
-    ## Stage 2 for ABBY
-
     ## ABBY NEE forecast run
-
-    ## Stage 3 for BARR
-
-    ## Stage 2 for BARR
 
     ## BARR NEE forecast run
 
-    ## Stage 3 for BART
-
-    ## Stage 2 for BART
-
     ## BART NEE forecast run
-
-    ## Stage 3 for BLAN
-
-    ## Stage 2 for BLAN
 
     ## BLAN NEE forecast run
 
-    ## Stage 3 for BONA
-
-    ## Stage 2 for BONA
-
     ## BONA NEE forecast run
-
-    ## Stage 3 for CLBJ
-
-    ## Stage 2 for CLBJ
 
     ## CLBJ NEE forecast run
 
-    ## Stage 3 for CPER
-
-    ## Stage 2 for CPER
-
     ## CPER NEE forecast run
-
-    ## Stage 3 for DCFS
-
-    ## Stage 2 for DCFS
 
     ## DCFS NEE forecast run
 
-    ## Stage 3 for DEJU
-
-    ## Stage 2 for DEJU
-
     ## DEJU NEE forecast run
-
-    ## Stage 3 for DELA
-
-    ## Stage 2 for DELA
 
     ## DELA NEE forecast run
 
-    ## Stage 3 for DSNY
-
-    ## Stage 2 for DSNY
-
     ## DSNY NEE forecast run
-
-    ## Stage 3 for GRSM
-
-    ## Stage 2 for GRSM
 
     ## GRSM NEE forecast run
 
-    ## Stage 3 for GUAN
-
-    ## Stage 2 for GUAN
-
     ## GUAN NEE forecast run
-
-    ## Stage 3 for HARV
-
-    ## Stage 2 for HARV
 
     ## HARV NEE forecast run
 
-    ## Stage 3 for HEAL
-
-    ## Stage 2 for HEAL
-
     ## HEAL NEE forecast run
-
-    ## Stage 3 for JERC
-
-    ## Stage 2 for JERC
 
     ## JERC NEE forecast run
 
-    ## Stage 3 for JORN
-
-    ## Stage 2 for JORN
-
     ## JORN NEE forecast run
-
-    ## Stage 3 for KONA
-
-    ## Stage 2 for KONA
 
     ## KONA NEE forecast run
 
-    ## Stage 3 for KONZ
-
-    ## Stage 2 for KONZ
-
     ## KONZ NEE forecast run
-
-    ## Stage 3 for LAJA
-
-    ## Stage 2 for LAJA
 
     ## LAJA NEE forecast run
 
-    ## Stage 3 for LENO
-
-    ## Stage 2 for LENO
-
     ## LENO NEE forecast run
-
-    ## Stage 3 for MLBS
-
-    ## Stage 2 for MLBS
 
     ## MLBS NEE forecast run
 
-    ## Stage 3 for MOAB
-
-    ## Stage 2 for MOAB
-
     ## MOAB NEE forecast run
-
-    ## Stage 3 for NIWO
-
-    ## Stage 2 for NIWO
 
     ## NIWO NEE forecast run
 
-    ## Stage 3 for NOGP
-
-    ## Stage 2 for NOGP
-
     ## NOGP NEE forecast run
-
-    ## Stage 3 for OAES
-
-    ## Stage 2 for OAES
 
     ## OAES NEE forecast run
 
-    ## Stage 3 for ONAQ
-
-    ## Stage 2 for ONAQ
-
     ## ONAQ NEE forecast run
-
-    ## Stage 3 for ORNL
-
-    ## Stage 2 for ORNL
 
     ## ORNL NEE forecast run
 
-    ## Stage 3 for OSBS
-
-    ## Stage 2 for OSBS
-
     ## OSBS NEE forecast run
-
-    ## Stage 3 for PUUM
-
-    ## Stage 2 for PUUM
 
     ## PUUM NEE forecast run
 
-    ## Stage 3 for RMNP
-
-    ## Stage 2 for RMNP
-
     ## RMNP NEE forecast run
-
-    ## Stage 3 for SCBI
-
-    ## Stage 2 for SCBI
 
     ## SCBI NEE forecast run
 
-    ## Stage 3 for SERC
-
-    ## Stage 2 for SERC
-
     ## SERC NEE forecast run
-
-    ## Stage 3 for SJER
-
-    ## Stage 2 for SJER
 
     ## SJER NEE forecast run
 
-    ## Stage 3 for SOAP
-
-    ## Stage 2 for SOAP
-
     ## SOAP NEE forecast run
-
-    ## Stage 3 for SRER
-
-    ## Stage 2 for SRER
 
     ## SRER NEE forecast run
 
-    ## Stage 3 for STEI
-
-    ## Stage 2 for STEI
-
     ## STEI NEE forecast run
-
-    ## Stage 3 for STER
-
-    ## Stage 2 for STER
 
     ## STER NEE forecast run
 
-    ## Stage 3 for TALL
-
-    ## Stage 2 for TALL
-
     ## TALL NEE forecast run
-
-    ## Stage 3 for TEAK
-
-    ## Stage 2 for TEAK
 
     ## TEAK NEE forecast run
 
-    ## Stage 3 for TOOL
-
-    ## Stage 2 for TOOL
-
     ## TOOL NEE forecast run
-
-    ## Stage 3 for TREE
-
-    ## Stage 2 for TREE
 
     ## TREE NEE forecast run
 
-    ## Stage 3 for UKFS
-
-    ## Stage 2 for UKFS
-
     ## UKFS NEE forecast run
-
-    ## Stage 3 for UNDE
-
-    ## Stage 2 for UNDE
 
     ## UNDE NEE forecast run
 
-    ## Stage 3 for WOOD
-
-    ## Stage 2 for WOOD
-
     ## WOOD NEE forecast run
 
-    ## Stage 3 for WREF
-
-    ## Stage 2 for WREF
-
     ## WREF NEE forecast run
-
-    ## Stage 3 for YELL
-
-    ## Stage 2 for YELL
 
     ## YELL NEE forecast run
 
@@ -974,7 +793,7 @@ our forecast.
 
 Looking back at the forecasts we produced:
 
-![](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_github/nee-forecasts-1.png)
 
 ## 5.1 Convert to EFI standard for submission
 
@@ -1001,7 +820,7 @@ can submit this to the challenge as well! This is an ensemble forecast
 
 ``` r
 # Remember to change the model_id when you make changes to the model structure!
-my_model_id <- 'test_model'
+my_model_id <- 'ESA_example'
 
 lm_forecast_EFI <- lm_forecast %>%
   mutate(model_id = my_model_id,
@@ -1038,7 +857,7 @@ forecast_file_1 <- paste(theme, date, forecast_name_1, sep = '-')
 forecast_file_1
 ```
 
-    ## [1] "terrestrial_daily-2023-07-05-test_model.csv"
+    ## [1] "terrestrial_daily-2023-07-05-ESA_example.csv"
 
 ``` r
 write_csv(lm_forecast_EFI, forecast_file_1)
@@ -1046,7 +865,7 @@ write_csv(lm_forecast_EFI, forecast_file_1)
 neon4cast::forecast_output_validator(forecast_file_1)
 ```
 
-    ## terrestrial_daily-2023-07-05-test_model.csv
+    ## terrestrial_daily-2023-07-05-ESA_example.csv
 
     ## ✔ file name is correct
     ## ✔ forecasted variables found correct variable + prediction column
@@ -1063,7 +882,7 @@ neon4cast::forecast_output_validator(forecast_file_1)
 ``` r
 # can uses the neon4cast::forecast_output_validator() to check the forecast is in the right format
 neon4cast::submit(forecast_file = forecast_file_1,
-                  ask = FALSE) # if ask = T (default), it will produce a pop-up box asking if you want to submit
+                  ask = TRUE) # if ask = T (default), it will produce a pop-up box asking if you want to submit
 ```
 
 Is the linear model a reasonable relationship between NEE and air
@@ -1081,6 +900,9 @@ Possible modifications to Model 1 - simple linear model:
 -   Try forecasting another variable (latent heat flux of
     evapotranspiration)
 -   Include a lag in the predictors
+-   Include additional sources of uncertainty - what is the error of the
+    residuals and what does this indicate about the uncertainty in the
+    model.
 
 Remember to change the `model_id` so we can differentiate different
 forecasts!
@@ -1101,3 +923,29 @@ crucial for a couple of reasons:
     Challenge-wide syntheses being carried out by the Challenge
     organisers. Partipants in the Challenge will be invited to join the
     synthesis projects on an opt-in basis.
+
+## 5.5 Automate your forecasts!
+
+One of the most exciting parts of near-term ecological forecasting is
+the iterative nature of it. Submitting a brand new forecast everyday
+with updated models etc. will test how well your model does over
+different days. You can also continue to tune parameters, update initial
+conditions, or modify the model as new data are collected.
+
+## 5.6 See how your forecasts perform
+
+During this workshop, we have gone through a simple forecast submission
+workflow. This submits a standardised format forecast to an AWS (Amazon
+Web Services) bucket which will automatically undergo ‘scoring’,
+comparing your prediction (and the associated uncertainty) with the
+observations collected by NEON to produce score metrics. These scores
+tell us how well each model was able to reproduce the observations, with
+lower scores indicating higher performance (and lower error). See
+[here]() for information about how the scores are calculated.
+
+We don’t have time to do this in this workshop but if you are interested
+in knowing more about your forecast’s performance, see the [dashboard]()
+or [this
+tutorial](https://github.com/OlssonF/NEON-forecast-challenge-workshop/tree/main/Analyse_scores)
+to learn about accessing, visualising, and analysing forecast
+performance.

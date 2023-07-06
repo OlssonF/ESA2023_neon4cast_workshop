@@ -41,7 +41,6 @@ remotes::install_github('eco4cast/neon4cast') # package from NEON4cast challenge
 
 Additionally, R version 4.2 is required to run the `neon4cast` package. It's also worth checking your Rtools is up to date and compatible with R 4.2, see (https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html). 
 
-
 ```{r}
 version$version.string
 
@@ -50,7 +49,7 @@ library(tidyverse)
 library(lubridate)
 ```
 
-If you do not wish to run the code yourself you can follow along via the html (NEON_forecast_challenge_workshop.md), which can be downloaded from the [Github repository](https://github.com/OlssonF/NEON-forecast-challenge-workshop). 
+If you do not wish to run the code yourself you can follow along via the rendered markdown document (NEON_forecast_challenge_workshop_terrestrial.md).
 
 # Introduction to NEON forecast challenge
 
@@ -110,7 +109,7 @@ targets <- targets |>
 ```
 
 ## Visualise the data
-```{r eval = T, echo = F, warning=FALSE, fig.dim=c(10,10), fig.cap=c('Figure: Targets data at terrestrial sites provided by EFI for the NEON forecasting challgenge')}
+```{r targets, eval = T, echo = F, warning=FALSE, fig.dim=c(10,10), fig.cap=c('Figure: Targets data at terrestrial sites provided by EFI for the NEON forecasting challgenge')}
 sites1 <- site_data[1:12,]
 sites2 <- site_data[13:24,]
 sites3 <- site_data[25:36,]
@@ -152,13 +151,13 @@ targets %>%
 
 We can think about what type of models might be useful to predict these variables at these sites. Below are descriptions of three simple models which have been constructed to get you started forecasting:
 
-* We could use information about recent conditions to predict the future. What is happening today is usually a good predictor of what will happen tomorrow 
-* We could also look at the variable's relationship(s) with other variables. Could we use existing forecasts about the weather to generate forecasts about terrestrial fluxes 
-* And we could think about what the historic data tells us about this time of year. Is this time of year likely to be similar the same period last year 
+* We could use information about recent conditions to predict the future. What is happening today is usually a good predictor of what will happen tomorrow.
+* And we could think about what the historic data tells us about this time of year. Is this time of year likely to be similar the same period last year? 
+* We could also look at the variable's relationship(s) with other variables. Could we use existing forecasts about the weather to generate forecasts about terrestrial fluxes?
 
 # Introducing co-variates
 
-One important step to overcome when thinking about generating forecasts is to include co-variates in the model. A forecast of NEE, for example, may be benefit from information about past and future weather. The neon4cast challenge package includes functions for downloading past and future NOAA weather forecasts for all of the NEON sites. The 3 types of data are as follows:
+One important step to overcome when thinking about generating forecasts is how to include co-variates in the model. A forecast of NEE, for example, may be benefit from information about past and future weather. The `neon4cast` challenge package includes functions for downloading past and future NOAA weather forecasts for all of the NEON sites. The 3 types of data are as follows:
 
 * stage_1: raw forecasts - 31 member ensemble forecasts at 3 hr intervals for the first 10 days, and 6 hr intervals for up to 35 days at the NEON sites.
 * stage_2: a processed version of Stage 1 in which fluxes are standardized to per second rates, fluxes and states are interpolated to 1 hour intervals and variables are renamed to match conventions. We recommend this for obtaining future weather by using `neon4cast::noaa_stage2()`. Future weather forecasts include a 30-member ensemble of equally likely future weather conditions.
@@ -172,7 +171,7 @@ You can read more about the NOAA forecasts available for the NEON sites [here:](
 ### Download historic data
 
 We will generate a `nee` forecast using `air_temperature` and `solar_radiation` as a co-variates. As an example of the workflow we will work with 1 site - HARV (Harvard deciduous forest).
-```{r}
+```{r HARV}
 example_site <- 'HARV'
 
 targets |> 
@@ -261,9 +260,10 @@ noaa_future_daily_example <- noaa_future_example |>
 
 noaa_future_daily_example
 ```
+
 Now we have a timeseries of historic data and a 30 member ensemble forecast of future air temperatures and shortwave for one site. 
 
-```{r echo = F, fig.cap = c('Figure: historic and future NOAA air temeprature forecasts for 1 NEON site', 'Figure: historic and future NOAA shortwave forecasts for 1 NEON site ')}
+```{r NOAA-HARV, echo = F, fig.cap = c('Figure: historic and future NOAA air temeprature forecasts for 1 NEON site', 'Figure: historic and future NOAA shortwave forecasts for 1 NEON site ')}
 noaa_future_daily_example |> 
   filter(site_id == 'HARV') |> 
   ggplot(aes(x=datetime, y=air_temperature)) +
@@ -289,12 +289,14 @@ We will fit a simple linear model between historic air temperature, shortwave ra
 
 We will start by joining the historic weather data with the targets to aid in fitting the linear model.
 
-```{r, }
+```{r}
 targets_lm_example <- targets |> 
   filter(site_id %in% example_site) |> 
-  pivot_wider(names_from = 'variable', values_from = 'observation') |> 
+  pivot_wider(names_from = 'variable', 
+              values_from = 'observation') |> 
   left_join(noaa_past_mean_example, 
             by = c("datetime","site_id"))
+
 tail(targets_lm_example)
 ```
 
@@ -313,9 +315,9 @@ forecasted_nee <- fit$coefficients[1] +
 
 ```
 
-```{r}
+```{r example-forecast}
   # put all the relevent information into a tibble that we can bind together
-  NEE <- tibble(datetime = noaa_future_daily_example$datetime,
+  NEE <- data.frame(datetime = noaa_future_daily_example$datetime,
                         site_id = "HARV",
                         parameter = noaa_future_daily_example$parameter,
                         prediction = forecasted_nee,
@@ -326,7 +328,7 @@ forecasted_nee <- fit$coefficients[1] +
   
   
   
-  #Some edits would be needed to submit to the challenge... see commented code
+  # Some edits would be needed to submit to the challenge... see commented code
   
   #   my_model_id <- 'nee_test'
   # 
@@ -337,11 +339,13 @@ forecasted_nee <- fit$coefficients[1] +
   #          parameter = as.character(parameter)) %>%
   # select(model_id, datetime, reference_datetime, site_id, family, parameter, variable, prediction)
 ```
-  
+
+A forecast!!
+
 We can loop through this workflow for each site to create a site-wise forecast of NEE based on a linear model and each forecasted air temperature and shortwave. We can run this forecast for each site and then bind them together to submit as one forecast. 
  
 1. Download historic NOAA data
-2. Download future NOAA
+2. Download future NOAA forecast
 3. Fit the model
 4. Forecast!
 5. Bind this all together...
@@ -358,12 +362,13 @@ df_future <- neon4cast::noaa_stage2()
 # specify the covariates
 variables <- c("air_temperature", "surface_downwelling_shortwave_flux_in_air")
 
+# create some empty objects to assign things to
 lm_forecast <- NULL
 model_fit <- NULL
 
 loop_sites <- 1:5 #1:length(site_data$field_site_id)
 
-## Stash NOAA locally:
+## Stash NOAA locally. This will speed up the access to NOAA by writing a local copy that we query
 df_past |> 
     dplyr::filter(datetime >= ymd('2017-01-01'),
                   variable %in% variables) |> 
@@ -382,7 +387,7 @@ for(i in 1:length(site_data$field_site_id)) {
   
   site <- site_data$field_site_id[i]
   
-  # 1. Download historic NOAA data
+  # 1. Get historic NOAA data
   noaa_past <- arrow::open_dataset("noaa_past") |> 
     dplyr::filter(site_id %in% site,
                   datetime >= ymd('2017-01-01'),
@@ -399,10 +404,10 @@ for(i in 1:length(site_data$field_site_id)) {
     rename(shortwave = surface_downwelling_shortwave_flux_in_air) |> 
     mutate(air_temperature = air_temperature - 273.15)
   
-  message('Stage 3 for ', site)
+  # message('Stage 3 for ', site)
 
   
-  #2. Download future NOAA data
+  #2. Get future NOAA data
   # Download the stage2 data
   noaa_future <- arrow::open_dataset("noaa_future") |> 
     dplyr::filter(reference_datetime == noaa_date,
@@ -425,7 +430,7 @@ for(i in 1:length(site_data$field_site_id)) {
     rename(shortwave = surface_downwelling_shortwave_flux_in_air) |> 
     select(datetime, site_id, air_temperature, shortwave, parameter)
   
-   message('Stage 2 for ', site)
+   # message('Stage 2 for ', site)
   
   #3. Fit the model
     # targets data reformatted to aid model fitting
@@ -468,34 +473,26 @@ We now have 30 possible forecasts of NEE at each site and each day. On this plot
 
 Looking back at the forecasts we produced:
 
-```{r, echo = F, warning = F}
+```{r nee-forecasts, echo = F, warning = F}
 lm_forecast %>% 
-  # filter(site_id %in% site_data$field_site_id[loop_sites]) |> 
+  filter(site_id %in% site_data$field_site_id[1:9]) |> 
   ggplot(aes(x=datetime, y=prediction, group = parameter)) + 
   geom_point(data = subset(targets, site_id %in% site_data$field_site_id[loop_sites]),
              aes(x=datetime, y=observation, group = 'obs'), colour = 'darkblue') +
   geom_line(alpha = 0.5, aes(colour = 'ensemble member (parameter)')) + 
   scale_x_date(expand = c(0,0), date_labels = "%d %b") +
   labs(y = 'value') +
-  facet_wrap(~site_id, scales = 'free') +
+  facet_wrap(~site_id, nrow = 3, scales = 'free') +
   geom_vline(aes(linetype = 'reference_datetime', xintercept = Sys.Date()), colour = 'blue', size = 1.5) +
-  labs(title = 'site_id', subtitle = 'variable = nee', caption = 'prediction') + 
-  annotate("text", x = Sys.Date() - days(10), y = 2, label = "past")  +
-  annotate("text", x = Sys.Date() + days(12), y = 2, label = "future")  +
+  labs(subtitle = 'variable = nee', caption = 'prediction') + 
+  annotate("text", x = Sys.Date() - days(15), y = 2, label = "past")  +
+  annotate("text", x = Sys.Date() + days(15), y = 2, label = "future")  +
   theme_bw() +
   coord_cartesian(xlim = c(min(lm_forecast$datetime) - 60,
-                           Sys.Date() + 30),
-                  ylim = c(-10,20)) +
+                           Sys.Date() + 30)) +
   scale_linetype_manual(values = 'dashed', name = '') +
   scale_colour_manual(values = 'darkgrey', name = '') +
-  theme(strip.text = element_text(colour = 'orange'),
-        axis.title.y = element_text(colour = 'green'),
-        axis.title.x = element_text(colour = 'red'),
-        axis.text.y = element_text(colour = 'purple'),
-        axis.text.x = element_text(colour = 'red'),
-        plot.caption = element_text(hjust = 0, colour = 'purple'),
-        plot.title = element_text(colour = 'orange'), 
-        plot.subtitle = element_text(colour = 'green')) 
+  theme(legend.position = 'bottom')
 ```
 
 ## Convert to EFI standard for submission
@@ -514,7 +511,7 @@ We need to make sure the dataframe is in the correct format and then we can subm
 
 ```{r}
 # Remember to change the model_id when you make changes to the model structure!
-my_model_id <- 'test_model'
+my_model_id <- 'ESA_example'
 
 lm_forecast_EFI <- lm_forecast %>%
   mutate(model_id = my_model_id,
@@ -550,7 +547,7 @@ neon4cast::forecast_output_validator(forecast_file_1)
 ```{r eval = FALSE}
 # can uses the neon4cast::forecast_output_validator() to check the forecast is in the right format
 neon4cast::submit(forecast_file = forecast_file_1,
-                  ask = FALSE) # if ask = T (default), it will produce a pop-up box asking if you want to submit
+                  ask = TRUE) # if ask = T (default), it will produce a pop-up box asking if you want to submit
 ```
 
 Is the linear model a reasonable relationship between NEE and air temperature and solar radiation? Would some non-linear relationship be better? What about using maximum shortwave to predict NEE? Or including additional parameters? 
@@ -562,6 +559,7 @@ Possible modifications to Model 1 - simple linear model:
 * Specify a non-linear relationship
 * Try forecasting another variable (latent heat flux of evapotranspiration)
 * Include a lag in the predictors
+* Include additional sources of uncertainty - what is the error of the residuals and what does this indicate about the uncertainty in the model.
 
 Remember to change the `model_id` so we can differentiate different forecasts!
 
@@ -570,3 +568,13 @@ It's really important that once you start submitting forecasts to the Challenge 
 
 1. We can keep track different forecast submissions during the scoring process to see which forecast is performing the best. Your `model_id` will be used to track the submissions so any new forecast model requires a new `model_id`.
 2. The form gives consent for submissions to be included in Challenge-wide syntheses being carried out by the Challenge organisers. Partipants in the Challenge will be invited to join the synthesis projects on an opt-in basis. 
+
+
+## Automate your forecasts!
+One of the most exciting parts of near-term ecological forecasting is the iterative nature of it. Submitting a brand new forecast everyday with updated models etc. will test how well your model does over different days. You can also continue to tune parameters, update initial conditions, or modify the model as new data are collected. 
+
+## See how your forecasts perform
+
+During this workshop, we have gone through a simple forecast submission workflow. This submits a standardised format forecast to an AWS (Amazon Web Services) bucket which will automatically undergo 'scoring', comparing your prediction (and the associated uncertainty) with the observations collected by NEON to produce score metrics. These scores tell us how well each model was able to reproduce the observations, with lower scores indicating higher performance (and lower error). See [here]() for information about how the scores are calculated. 
+
+We don't have time to do this in this workshop but if you are interested in knowing more about your forecast's performance, see the [dashboard]() or [this tutorial](https://github.com/OlssonF/NEON-forecast-challenge-workshop/tree/main/Analyse_scores) to learn about accessing, visualising, and analysing forecast performance.
