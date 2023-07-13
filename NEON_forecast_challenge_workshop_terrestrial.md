@@ -118,6 +118,11 @@ If you do not wish to run the code yourself you can follow along via the
 rendered markdown document
 (NEON_forecast_challenge_workshop_terrestrial.md).
 
+Note: if you are familiar with and comfortable using Docker containers
+you can run this easily using the `eco4cast/rocker-neon4cast` Docker
+image which has all the packages pre-installed in a stable Linux
+environment.
+
 # 2 Introduction to NEON forecast challenge
 
 The EFI RCN NEON Forecast Challenge asks the scientific community to
@@ -411,16 +416,16 @@ noaa_future_example
     ## # A tibble: 43,200 × 13
     ##    site_id prediction variable      height horizon parameter reference_datetime 
     ##    <chr>        <dbl> <chr>         <chr>    <dbl>     <int> <dttm>             
-    ##  1 HARV           0   surface_down… surfa…      24         1 2023-07-05 00:00:00
-    ##  2 HARV           0   surface_down… surfa…      25         1 2023-07-05 00:00:00
-    ##  3 HARV           0   surface_down… surfa…      26         1 2023-07-05 00:00:00
-    ##  4 HARV           0   surface_down… surfa…      27         1 2023-07-05 00:00:00
-    ##  5 HARV           0   surface_down… surfa…      28         1 2023-07-05 00:00:00
-    ##  6 HARV           0   surface_down… surfa…      29         1 2023-07-05 00:00:00
-    ##  7 HARV           0   surface_down… surfa…      30         1 2023-07-05 00:00:00
-    ##  8 HARV           0   surface_down… surfa…      31         1 2023-07-05 00:00:00
-    ##  9 HARV           0   surface_down… surfa…      32         1 2023-07-05 00:00:00
-    ## 10 HARV          14.4 surface_down… surfa…      33         1 2023-07-05 00:00:00
+    ##  1 HARV          0    surface_down… surfa…      24         1 2023-07-12 00:00:00
+    ##  2 HARV          0    surface_down… surfa…      25         1 2023-07-12 00:00:00
+    ##  3 HARV          0    surface_down… surfa…      26         1 2023-07-12 00:00:00
+    ##  4 HARV          0    surface_down… surfa…      27         1 2023-07-12 00:00:00
+    ##  5 HARV          0    surface_down… surfa…      28         1 2023-07-12 00:00:00
+    ##  6 HARV          0    surface_down… surfa…      29         1 2023-07-12 00:00:00
+    ##  7 HARV          0    surface_down… surfa…      30         1 2023-07-12 00:00:00
+    ##  8 HARV          0    surface_down… surfa…      31         1 2023-07-12 00:00:00
+    ##  9 HARV          0    surface_down… surfa…      32         1 2023-07-12 00:00:00
+    ## 10 HARV          4.25 surface_down… surfa…      33         1 2023-07-12 00:00:00
     ## # ℹ 43,190 more rows
     ## # ℹ 6 more variables: forecast_valid <chr>, datetime <dttm>, longitude <dbl>,
     ## #   latitude <dbl>, family <chr>, start_date <chr>
@@ -447,16 +452,16 @@ noaa_future_daily_example
     ## # Groups:   datetime, site_id, parameter [900]
     ##    datetime   site_id air_temperature shortwave parameter
     ##    <date>     <chr>             <dbl>     <dbl>     <int>
-    ##  1 2023-07-06 HARV               25.5      263.         1
-    ##  2 2023-07-06 HARV               25.3      298.         2
-    ##  3 2023-07-06 HARV               24.2      242.         3
-    ##  4 2023-07-06 HARV               24.9      252.         4
-    ##  5 2023-07-06 HARV               24.6      264.         5
-    ##  6 2023-07-06 HARV               24.6      253.         6
-    ##  7 2023-07-06 HARV               24.4      206.         7
-    ##  8 2023-07-06 HARV               25.6      310.         8
-    ##  9 2023-07-06 HARV               24.2      313.         9
-    ## 10 2023-07-06 HARV               23.5      202.        10
+    ##  1 2023-07-13 HARV               22.2      257.         1
+    ##  2 2023-07-13 HARV               20.8      186.         2
+    ##  3 2023-07-13 HARV               19.6      169.         3
+    ##  4 2023-07-13 HARV               21.5      249.         4
+    ##  5 2023-07-13 HARV               21.4      228.         5
+    ##  6 2023-07-13 HARV               22.1      247          6
+    ##  7 2023-07-13 HARV               20.5      144.         7
+    ##  8 2023-07-13 HARV               22.3      247.         8
+    ##  9 2023-07-13 HARV               21.1      208.         9
+    ## 10 2023-07-13 HARV               21.4      195.        10
     ## # ℹ 890 more rows
 
 Now we have a timeseries of historic data and a 30 member ensemble
@@ -493,12 +498,12 @@ tail(targets_lm_example)
     ## # A tibble: 6 × 5
     ##   datetime   site_id    nee air_temperature shortwave
     ##   <date>     <chr>    <dbl>           <dbl>     <dbl>
-    ## 1 2023-06-24 HARV    -2.32             18.6      89.6
-    ## 2 2023-06-25 HARV    -5.99             22.3     282. 
-    ## 3 2023-06-26 HARV    -2.43             20.3     262. 
-    ## 4 2023-06-27 HARV    -4.21             19.0     138. 
-    ## 5 2023-06-28 HARV     0.624            18.9     143. 
-    ## 6 2023-06-29 HARV    -5.91             19.1     269
+    ## 1 2023-06-29 HARV     -5.91            19.1      267.
+    ## 2 2023-06-30 HARV    -11.2             20.7      284.
+    ## 3 2023-07-01 HARV    -11.1             20.6      292.
+    ## 4 2023-07-04 HARV     -3.30            20.5      181.
+    ## 5 2023-07-05 HARV    -10.1             23.1      328.
+    ## 6 2023-07-06 HARV     -9.07            24.0      426.
 
 To fit the linear model we use the base R `lm()` but there are also
 methods to fit linear (and non-linear) models in the `fable::` package.
@@ -509,10 +514,10 @@ linear model for each site. For example, at HARV forest (HARV), this
 would look like:
 
 ``` r
-#Fit linear model based on past data: water temperature = m * air temperature + b
+#Fit linear model based on past data: NEE = a * air temperature + b * shortwave
 fit <- lm(targets_lm_example$nee ~ targets_lm_example$air_temperature + targets_lm_example$shortwave)
     
-# use linear regression to forecast water temperature for each ensemble member
+# use linear regression to forecast NEE for each ensemble member
 forecasted_nee <- fit$coefficients[1] + 
   (fit$coefficients[2] * noaa_future_daily_example$air_temperature) + 
   (fit$coefficients[3] * noaa_future_daily_example$shortwave)
@@ -667,7 +672,7 @@ for(i in 1:length(site_data$field_site_id)) {
   #Fit linear model based on past data
   fit <- lm(targets_lm$nee ~ targets_lm$air_temperature + targets_lm$shortwave)
     
-  # use linear regression to forecast water temperature for each ensemble member
+  # use linear regression to forecast NEE for each ensemble member
   forecasted_nee <- fit$coefficients[1] + 
     (fit$coefficients[2] * noaa_future_daily$air_temperature) + 
     (fit$coefficients[3] * noaa_future_daily$shortwave)
@@ -857,7 +862,7 @@ forecast_file_1 <- paste(theme, date, forecast_name_1, sep = '-')
 forecast_file_1
 ```
 
-    ## [1] "terrestrial_daily-2023-07-05-ESA_example.csv"
+    ## [1] "terrestrial_daily-2023-07-12-ESA_example.csv"
 
 ``` r
 write_csv(lm_forecast_EFI, forecast_file_1)
@@ -865,7 +870,7 @@ write_csv(lm_forecast_EFI, forecast_file_1)
 neon4cast::forecast_output_validator(forecast_file_1)
 ```
 
-    ## terrestrial_daily-2023-07-05-ESA_example.csv
+    ## terrestrial_daily-2023-07-12-ESA_example.csv
 
     ## ✔ file name is correct
     ## ✔ forecasted variables found correct variable + prediction column
