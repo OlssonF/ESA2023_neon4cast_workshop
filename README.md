@@ -2,7 +2,7 @@
 These materials have been developed for the 2023 Ecological Society of America meeting in Portland, Oregon as an introduction to the Ecological Forecasting Initiative and NEON Forecasting Challenge. The materials will take you through a basic workflow and will get you started on participating in the Challenge. These materials comprise of an R markdown script that generate a simple forecast of daily terrestrial fluxes of carbon and evaporation for the terrestrial NEON (National Ecological Observatory Networks) sites.
 
 ## Getting started
-1. Set up your R environment
+1. Set up your R environment (we will be using R and R Studio)
 2. Download code, clone, or fork (recommended) the repository
 3. Work through the example
 
@@ -28,19 +28,26 @@ Make sure to restart your R session after installing any new packages!
 ### 2. Fork or clone the Github repository or download the code
 There are 3 options for getting the code locally so that you can run it, depending on your experience with Github/Git you can do one of the following 
 
-1. Fork the repository to your Github and then clone the repository from your Github repository to a local RStudio project. This will allow you to modify the scripts and push it back to your Github. 
+1. _Fork_ the repository to your Github and then clone the repository from your Github repository to a local RStudio project. This will allow you to modify the scripts and push it back to your Github. 
 
+- Find the fork button in the top right of the webpage --> Create Fork. This will generate a copy of this repository in your Github.
+- Then use the <> Code button to copy the HTTPS link (from you Github!). 
+- In RStudio, go to New Project --> Version Control --> Git. 
+- Paste the HTTPS link in the Repository URL space, and choose a suitable location for your local repository --> Create Project. 
+- Open the .Rmd file
+
+2. _Clone_ the workshop repository to a local RStudio project. Your local workspace will be set up and you can commit changes locally but they won't be pushed back to the Github repository.
 - Find the fork button in the top left of the webpage --> Create Fork. 
-- Then use the <> Code button to copy the HTTPS link. 
+- Then use the <> Code button to copy the HTTPS link.
 - In RStudio go to New Project --> Version Control --> Git. 
 - Paste the HTTPS link in the Repository URL space, and choose a suitable location for your local repository --> Create Project. 
+- Open the .Rmd file
 
-2. Clone the workshop repository to a local RStudio project. Your local workspace will be set up and you can commit changes locally but they won't be pushed back to the Github repository.
-Find the fork button in the top left of the webpage --> Create Fork. Then use the <> Code button to copy the HTTPS link. In RStudio go to New Project --> Version Control --> Git. Paste the HTTPS link in the Repository URL space, and choose a suitable location for your local repository --> Create Project. 
+3. _Download_ the zip file of the repository code. You can save changes (without version control) locally.
+- Find the <> Code button --> Download ZIP. 
+- Unzip this to a location on your PC and open the `ESA2023_neon4cast_workshop.Rproj` file in RStudio. 
 
-3. Download the zip file of the repository code. Find the <> Code button --> Download ZIP. Unzip this to a location on your PC and open the `ESA2023_neon4cast_workshop.Rproj` file in RStudio. You can save changes (without version control) locally.
-
-More information on forking and cloning in R can be found at [happygitwithr](https://happygitwithr.com/fork-and-clone.html), a great resource to get you started using version control with R. 
+More information on forking and cloning in R can be found at [happygitwithr](https://happygitwithr.com/fork-and-clone.html), a great resource to get you started using version control with RStudio. 
 
 ### 3. Work through the example
 Step through the code chunks to take you through a simple forecasting workflow and submit your first real-time forecast to the Challenge!
