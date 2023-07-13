@@ -3,6 +3,6 @@
 .RData
 .Ruserdata
 
-*.csv
 noaa_past/
 noaa_future/
+Forecasts/

@@ -539,15 +539,18 @@ forecast_name_1 <- paste0(lm_forecast_EFI$model_id[1], ".csv")
 forecast_file_1 <- paste(theme, date, forecast_name_1, sep = '-')
 forecast_file_1
 
-write_csv(lm_forecast_EFI, forecast_file_1)
+if (!dir.exists('Forecasts')) {
+  dir.create('Forecasts')
+}
+write_csv(forecast_df_efi, file.path('Forecasts', forecast_file_1))
 
-neon4cast::forecast_output_validator(forecast_file_1)
+neon4cast::forecast_output_validator(file.path('Forecasts', forecast_file_1))
 
 ```
 
 ```{r eval = FALSE}
 # can uses the neon4cast::forecast_output_validator() to check the forecast is in the right format
-neon4cast::submit(forecast_file = forecast_file_1,
+neon4cast::submit(forecast_file = file.path('Forecasts', forecast_file_1),
                   ask = TRUE) # if ask = T (default), it will produce a pop-up box asking if you want to submit
 ```
 
