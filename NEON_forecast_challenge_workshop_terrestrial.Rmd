@@ -1,5 +1,5 @@
 ---
-title: "NEON forecast challenge - terrestrial daily"
+title: "ESA workshop 2023: NEON forecast challenge - terrestrial daily"
 author: Freya Olsson
 output:
   md_document: 
@@ -11,7 +11,6 @@ date: "`r Sys.Date()`"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 options(dplyr.summarise.inform = FALSE)
 ```
 
@@ -50,6 +49,8 @@ library(lubridate)
 ```
 
 If you do not wish to run the code yourself you can follow along via the rendered markdown document (NEON_forecast_challenge_workshop_terrestrial.md).
+
+Note: if you are familiar with and comfortable using Docker containers you can run this easily using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. 
 
 # Introduction to NEON forecast challenge
 
@@ -305,10 +306,10 @@ To fit the linear model we use the base R `lm()` but there are also methods to f
 
 ```{r, eval = T}
 
-#Fit linear model based on past data: water temperature = m * air temperature + b
+#Fit linear model based on past data: NEE = a * air temperature + b * shortwave
 fit <- lm(targets_lm_example$nee ~ targets_lm_example$air_temperature + targets_lm_example$shortwave)
     
-# use linear regression to forecast water temperature for each ensemble member
+# use linear regression to forecast NEE for each ensemble member
 forecasted_nee <- fit$coefficients[1] + 
   (fit$coefficients[2] * noaa_future_daily_example$air_temperature) + 
   (fit$coefficients[3] * noaa_future_daily_example$shortwave)
@@ -444,7 +445,7 @@ for(i in 1:length(site_data$field_site_id)) {
   #Fit linear model based on past data
   fit <- lm(targets_lm$nee ~ targets_lm$air_temperature + targets_lm$shortwave)
     
-  # use linear regression to forecast water temperature for each ensemble member
+  # use linear regression to forecast NEE for each ensemble member
   forecasted_nee <- fit$coefficients[1] + 
     (fit$coefficients[2] * noaa_future_daily$air_temperature) + 
     (fit$coefficients[3] * noaa_future_daily$shortwave)
