@@ -53,4 +53,8 @@ More information on forking and cloning in R can be found at [happygitwithr](htt
 ### 3. Work through the example
 
 Step through the code chunks to take you through a simple forecasting workflow and submit your first real-time forecast to the Challenge!
+
 More information on the Challenge can be found in [Thomas et al. 2023](https://doi.org/10.1002/fee.2616) and the associated [documention](https://projects.ecoforecast.org/neon4cast-docs/)
+
+Note: if you are familiar with and comfortable using Docker containers you can run these materials without any package installation by using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. 
+
