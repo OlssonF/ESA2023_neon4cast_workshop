@@ -15,7 +15,8 @@ options(dplyr.summarise.inform = FALSE)
 ```
 
 # This R markdown document
-This document present workshop materials presented at the ESA 2023 workshop "Can You Predict the Future? Introducing the NEON Ecological Forecasting Challenge."
+
+This document present workshop materials presented at the ESA 2023 workshop "Can You Predict the Future? Introducing the NEON Ecological Forecasting Challenge." The development of these materials has been supported by NSF grants DEB-1926388 and DBI-1933016. 
 
 To complete the workshop via this markdown document the following packages will need to be installed:
 
@@ -45,7 +46,7 @@ library(lubridate)
 
 If you do not wish to run the code yourself you can follow along via the rendered markdown document (NEON_forecast_challenge_workshop_terrestrial.md).
 
-Note: if you are familiar with and comfortable using Docker containers you can run this easily using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. 
+Note: if you are familiar with and comfortable using Docker containers you can run this easily using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. To run in Docker, follow the instructions [here](https://rocker-project.org) for running an Rstudio instance and substitute `eco4cast/rocker-neon4cast` for `rocker/rstudio`.
 
 # Introduction to NEON forecast challenge
 
@@ -72,6 +73,7 @@ For an ensemble forecast, the `family` column uses the word `ensemble` to design
 The full list of required columns and format can be found in the [Challenge documentation](https://projects.ecoforecast.org/neon4cast-docs/Submission-Instructions.html).
 
 # The forecasting workflow
+
 ## Read in the data
 
 We start forecasting by first looking at the historic data - called the `targets` (`targets` = what we are trying to forecast). These data are available with a 5 day delay (latency). Here is how you read in the data from the targets file available from the EFI server. 
@@ -338,7 +340,8 @@ forecasted_nee <- fit$coefficients[1] +
   # select(model_id, datetime, reference_datetime, site_id, family, parameter, variable, prediction)
 ```
 
-__A forecast!!__
+### A forecast!!
+
 
 We can loop through this workflow for each site to create a site-wise forecast of NEE based on a linear model and each forecasted air temperature and shortwave. We can run this forecast for each site and then bind them together to submit as one forecast. 
  
@@ -348,7 +351,7 @@ We can loop through this workflow for each site to create a site-wise forecast o
 4. Forecast!
 5. Bind this all together...
 
-Note: This loop takes a while to execute so start it running as soon as possible...
+Note: This loop takes a while to execute so start it running as soon as possible in the workshop period ...
 ```{r}
 # Create the connections to data products
 df_past <- neon4cast::noaa_stage3()
@@ -521,6 +524,7 @@ lm_forecast_EFI <- lm_forecast %>%
 ```
 
 ## Submit forecast
+
 Files need to be in the correct format for submission. The forecast organizers have created tools to help aid in the submission process. These tools can be downloaded from Github using `remotes::install_github(eco4cast/neon4cast)`.
 These include functions for submitting, scoring and reading forecasts:
 
@@ -554,8 +558,9 @@ neon4cast::submit(forecast_file = file.path('Forecasts', forecast_file_1),
 
 Is the linear model a reasonable relationship between NEE and air temperature and solar radiation? Would some non-linear relationship be better? What about using maximum shortwave to predict NEE? Or including additional parameters? 
 
-## TASKS
+## Workshop tasks
 Possible modifications to the simple linear model: 
+
 
 * Include additional NOAA co-variates in the linear model (remember to 'collect' and subset the right data from NOAA)
 * Specify a non-linear relationship
@@ -573,6 +578,7 @@ It's really important that once you start submitting forecasts to the Challenge 
 
 
 ## Automate your forecasts!
+
 One of the most exciting parts of near-term ecological forecasting is the iterative nature of it. Submitting a brand new forecast everyday with updated models etc. will test how well your model does over different days. You can also continue to tune parameters, update initial conditions, or modify the model as new data are collected. There are [detailed instructions](https://github.com/eco4cast/neon4cast-example) about setting up an Action in Github as well as a template repository once you are happy with your forecast model. You can take your code developed in this workshop with only some minor adjustment and have an automated iterative forecast. Just modify the `forecast_model.R`!
 
 ## See how your forecasts perform
