@@ -15,7 +15,8 @@ options(dplyr.summarise.inform = FALSE)
 ```
 
 # This R markdown document
-This document present workshop materials presented at the ESA 2023 workshop "Can You Predict the Future? Introducing the NEON Ecological Forecasting Challenge."
+
+This document present workshop materials presented at the ESA 2023 workshop "Can You Predict the Future? Introducing the NEON Ecological Forecasting Challenge." The development of these materials has been supported by NSF grants DEB-1926388 and DBI-1933016. 
 
 To complete the workshop via this markdown document the following packages will need to be installed:
 
@@ -46,7 +47,7 @@ library(lubridate)
 
 If you do not wish to run the code yourself you can follow along via the rendered markdown document (NEON_forecast_challenge_workshop_terrestrial.md).
 
-Note: if you are familiar with and comfortable using Docker containers you can run this easily using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. 
+Note: if you are familiar with and comfortable using Docker containers you can run this easily using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. To run in Docker, follow the instructions [here](https://rocker-project.org) for running an Rstudio instance and substitute `eco4cast/rocker-neon4cast` for `rocker/rstudio`.
 
 # Introduction to NEON forecast challenge
 
@@ -73,6 +74,7 @@ For an ensemble forecast, the `family` column uses the word `ensemble` to design
 The full list of required columns and format can be found in the [Challenge documentation](https://projects.ecoforecast.org/neon4cast-docs/Submission-Instructions.html).
 
 # The forecasting workflow
+
 ## Read in the data
 
 We start forecasting by first looking at the historic data - called the `targets` (`targets` = what we are trying to forecast). These data are available with a 5 day delay (latency). Here is how you read in the data from the targets file available from the EFI server. 
