@@ -223,7 +223,7 @@ We can then look at the future weather forecasts in the same way but using the `
 forecast_date <- Sys.Date() 
 noaa_date <- forecast_date - days(1)
 
-df_future <- neon4cast::noaa_stage2()
+df_future <- neon4cast::noaa_stage2(start_date = as.character(noaa_date))
 
 variables <- c("air_temperature", "surface_downwelling_shortwave_flux_in_air")
 
@@ -355,7 +355,7 @@ df_past <- neon4cast::noaa_stage3()
 
 forecast_date <- Sys.Date() 
 noaa_date <- forecast_date - days(1)
-df_future <- neon4cast::noaa_stage2()
+df_future <- neon4cast::noaa_stage2(start_date = as.character(noaa_date))
 
 # specify the covariates
 variables <- c("air_temperature", "surface_downwelling_shortwave_flux_in_air")
@@ -366,17 +366,19 @@ model_fit <- NULL
 
 
 ## Stash NOAA locally. This will speed up the access to NOAA by writing a local copy that we query
-df_past |> 
+df_past |>
     dplyr::filter(datetime >= ymd('2017-01-01'),
-                  variable %in% variables) |> 
+                  variable %in% variables,
+                  site_id %in% site_data$field_site_id) |>
     arrow::write_dataset("noaa_past", partitioning="site_id")
-    
-df_future |> 
+
+df_future |>
     dplyr::filter(reference_datetime == noaa_date,
                   datetime >= forecast_date,
                   variable %in% variables,
+                  site_id %in% site_data$field_site_id,
                   horizon < 744,
-                  parameter < 31) |> 
+                  parameter < 31) |>
     arrow::write_dataset("noaa_future", partitioning="site_id")
 
 
@@ -385,7 +387,7 @@ for(i in 1:length(site_data$field_site_id)) {
   site <- site_data$field_site_id[i]
   
   # 1. Get historic NOAA data
-  noaa_past <- arrow::open_dataset("noaa_past") |> 
+  noaa_past <- arrow::open_dataset('noaa_past') |> 
     dplyr::filter(site_id %in% site,
                   datetime >= ymd('2017-01-01'),
                   variable %in% variables) |> 
@@ -406,10 +408,10 @@ for(i in 1:length(site_data$field_site_id)) {
   
   #2. Get future NOAA data
   # Download the stage2 data
-  noaa_future <- arrow::open_dataset("noaa_future") |> 
+  noaa_future <- arrow::open_dataset('noaa_future') |> 
     dplyr::filter(reference_datetime == noaa_date,
                   datetime >= forecast_date,
-                  site_id %in% site,
+                  site_id == site,
                   variable %in% variables,
                   horizon < 744,
                   parameter < 31) |> 
@@ -474,7 +476,7 @@ Looking back at the forecasts we produced:
 lm_forecast %>% 
   filter(site_id %in% site_data$field_site_id[1:9]) |> 
   ggplot(aes(x=datetime, y=prediction, group = parameter)) + 
-  geom_point(data = subset(targets, site_id %in% site_data$field_site_id[loop_sites]),
+  geom_point(data = subset(targets, site_id %in% site_data$field_site_id[1:9]),
              aes(x=datetime, y=observation, group = 'obs'), colour = 'darkblue') +
   geom_line(alpha = 0.5, aes(colour = 'ensemble member (parameter)')) + 
   scale_x_date(expand = c(0,0), date_labels = "%d %b") +
@@ -495,13 +497,13 @@ lm_forecast %>%
 ## Convert to EFI standard for submission
 For an ensemble forecast the documentation specifies the following columns:
 
-* `datetime`: forecast timestamp for each time step
+* `datetime`: forecast time stamp for each time step
 * `reference_datetime`: The start of the forecast; this should be 0 times steps in the future. This should only be one value of reference_datetime in the file
 * `site_id`: NEON code for site
-* `family`: name of probability distribution that is described by the parameter values in the parameter column; only `normal` or `ensemble` are currently allowed.
-* `parameter`: integer value for forecast replicate (from the `.rep` in fable output);
+* `family`: name of forecast type described by the parameter values in the parameter column; only `normal` or `ensemble` are currently allowed. Using the NOAA weather forecasts we have generated an `ensemble` forecast
+* `parameter`: integer value for forecast replicate
 * `variable`: standardized variable name from the theme 
-* `prediction`: forecasted value 
+* `prediction`: forecast value 
 * `model_id`: model name (no spaces)
 
 We need to make sure the dataframe is in the correct format and then we can submit this to the challenge as well! This is an ensemble forecast (specified in the `family` column). These are the EFI forecast `standards`. 
@@ -526,7 +528,7 @@ These include functions for submitting, scoring and reading forecasts:
 * `forecast_output_validator()` - will check the file is in the correct format to be submitted
 * `check_submission()` - check that your submission has been uploaded to the server
 
-The file name needs to be in the format theme-reference_datetime-model_id
+The file name needs to be in the format `theme-reference_datetime-model_id`
 ```{r eval = T}
 # Start by writing the forecast to file
 theme <- 'terrestrial_daily'
@@ -538,7 +540,7 @@ forecast_file_1
 if (!dir.exists('Forecasts')) {
   dir.create('Forecasts')
 }
-write_csv(forecast_df_efi, file.path('Forecasts', forecast_file_1))
+write_csv(lm_forecast_EFI, file.path('Forecasts', forecast_file_1))
 
 neon4cast::forecast_output_validator(file.path('Forecasts', forecast_file_1))
 
@@ -553,13 +555,13 @@ neon4cast::submit(forecast_file = file.path('Forecasts', forecast_file_1),
 Is the linear model a reasonable relationship between NEE and air temperature and solar radiation? Would some non-linear relationship be better? What about using maximum shortwave to predict NEE? Or including additional parameters? 
 
 ## TASKS
-Possible modifications to Model 1 - simple linear model: 
+Possible modifications to the simple linear model: 
 
 * Include additional NOAA co-variates in the linear model (remember to 'collect' and subset the right data from NOAA)
 * Specify a non-linear relationship
 * Try forecasting another variable (latent heat flux of evapotranspiration)
 * Include a lag in the predictors
-* Include additional sources of uncertainty - what is the error of the residuals and what does this indicate about the uncertainty in the model.
+* Include additional sources of uncertainty - what is the error of the residuals and what does this indicate about the uncertainty in the model?
 
 Remember to change the `model_id` so we can differentiate different forecasts!
 
