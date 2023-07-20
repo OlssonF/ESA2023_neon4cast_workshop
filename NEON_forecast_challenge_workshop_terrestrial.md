@@ -25,12 +25,13 @@
 -   <a href="#model-1-linear-model-with-covariates"
     id="toc-model-1-linear-model-with-covariates">5 Model 1: Linear model
     with covariates</a>
+    -   <a href="#a-forecast" id="toc-a-forecast">5.0.1 A forecast!!</a>
     -   <a href="#convert-to-efi-standard-for-submission"
         id="toc-convert-to-efi-standard-for-submission">5.1 Convert to EFI
         standard for submission</a>
     -   <a href="#submit-forecast" id="toc-submit-forecast">5.2 Submit
         forecast</a>
-    -   <a href="#tasks" id="toc-tasks">5.3 TASKS</a>
+    -   <a href="#workshop-tasks" id="toc-workshop-tasks">5.3 Workshop tasks</a>
     -   <a href="#register-your-participation"
         id="toc-register-your-participation">5.4 Register your participation</a>
     -   <a href="#automate-your-forecasts" id="toc-automate-your-forecasts">5.5
@@ -43,14 +44,13 @@
 
 This document present workshop materials presented at the ESA 2023
 workshop “Can You Predict the Future? Introducing the NEON Ecological
-Forecasting Challenge.”
+Forecasting Challenge.” The development of these materials has been
+supported by NSF grants DEB-1926388 and DBI-1933016.
 
 To complete the workshop via this markdown document the following
 packages will need to be installed:
 
 -   `remotes`
--   `fpp3`
--   `tsibble`
 -   `tidyverse`
 -   `lubridate`
 -   `neon4cast` (from github)
@@ -59,8 +59,6 @@ The following code chunk should be run to install packages.
 
 ``` r
 install.packages('remotes')
-install.packages('fpp3') # package for applying simple forecasting methods
-install.packages('tsibble') # package for dealing with time series data sets and tsibble objects
 install.packages('tidyverse') # collection of R packages for data manipulation, analysis, and visualisation
 install.packages('lubridate') # working with dates and times
 remotes::install_github('eco4cast/neon4cast') # package from NEON4cast challenge organisers to assist with forecast building and submission
@@ -81,29 +79,11 @@ version$version.string
 library(tidyverse)
 ```
 
-    ## Warning: package 'tidyverse' was built under R version 4.2.3
-
-    ## Warning: package 'ggplot2' was built under R version 4.2.3
-
-    ## Warning: package 'tibble' was built under R version 4.2.1
-
-    ## Warning: package 'tidyr' was built under R version 4.2.2
-
-    ## Warning: package 'readr' was built under R version 4.2.1
-
-    ## Warning: package 'purrr' was built under R version 4.2.2
-
-    ## Warning: package 'dplyr' was built under R version 4.2.1
-
-    ## Warning: package 'stringr' was built under R version 4.2.2
-
-    ## Warning: package 'forcats' was built under R version 4.2.3
-
     ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ## ✔ dplyr     1.0.10     ✔ readr     2.1.3 
     ## ✔ forcats   1.0.0      ✔ stringr   1.5.0 
     ## ✔ ggplot2   3.4.2      ✔ tibble    3.1.8 
-    ## ✔ lubridate 1.8.0      ✔ tidyr     1.3.0 
+    ## ✔ lubridate 1.9.2      ✔ tidyr     1.3.0 
     ## ✔ purrr     1.0.1      
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
@@ -121,18 +101,20 @@ rendered markdown document
 Note: if you are familiar with and comfortable using Docker containers
 you can run this easily using the `eco4cast/rocker-neon4cast` Docker
 image which has all the packages pre-installed in a stable Linux
-environment.
+environment. To run in Docker, follow the instructions
+[here](https://rocker-project.org) for running an Rstudio instance and
+substitute `eco4cast/rocker-neon4cast` for `rocker/rstudio`.
 
 # 2 Introduction to NEON forecast challenge
 
-The EFI RCN NEON Forecast Challenge asks the scientific community to
-produce ecological forecasts of future conditions at NEON sites by
-leveraging NEON’s open data products. The Challenge is split into five
-themes that span aquatic and terrestrial systems, and population,
-community, and ecosystem processes across a broad range of ecoregions.
-We are excited to use this Challenge to learn more about the
-predictability of ecological processes by forecasting NEON data before
-it is collected.
+The EFI RCN NEON Forecast Challenge provides a platform for the
+scientific community to produce ecological forecasts of future
+conditions at NEON sites by leveraging NEON’s open data products. The
+Challenge is split into five themes that span aquatic and terrestrial
+systems, and population, community, and ecosystem processes across a
+broad range of ecoregions. We are excited to use this Challenge to learn
+more about the predictability of ecological processes by forecasting
+NEON data before it is collected.
 
 Which modeling frameworks, mechanistic processes, and statistical
 approaches best capture community, population, and ecosystem dynamics?
@@ -163,22 +145,21 @@ about the terrestrial challenge
 
 ## 2.2 Submission requirements
 
-For the Challenge, forecasts must include quantified uncertainty. The
-file can represent uncertainty using an ensemble forecast (multiple
-realizations of future conditions) or a distribution forecast (with mean
-and standard deviation), specified in the family and parameter columns
-of the forecast file.
+For the Challenge, forecasts must include quantified `uncertainty`. The
+forecast can represent uncertainty using an `ensemble` forecast
+(multiple realizations of future conditions) or a `distribution`
+forecast (with mean and standard deviation), specified in the family and
+parameter columns of the forecast file.
 
 For an ensemble forecast, the `family` column uses the word `ensemble`
 to designate that it is a ensemble forecast and the parameter column is
 the ensemble member number (1, 2, 3 …). For a distribution forecast, the
 `family` column uses the word `normal` to designate a normal
-distribution and the parameter column must have the words mu and sigma
-for each forecasted variable, site_id, and datetime. For forecasts that
-don’t have a normal distribution we recommend using the ensemble format
-and sampling from your non-normal distribution to generate a set of
-ensemble members that represents your distribution. I will go through
-examples of both `ensemble` and `normal` forecasts as examples.
+distribution and the parameter column must have the words `mu` and
+`sigma` for each forecasted variable, site_id, and datetime. For
+forecasts that don’t have a normal distribution we recommend using the
+ensemble format and sampling from your non-normal distribution to
+generate a set of ensemble members that represents your distribution.
 
 The full list of required columns and format can be found in the
 [Challenge
@@ -189,9 +170,9 @@ documentation](https://projects.ecoforecast.org/neon4cast-docs/Submission-Instru
 ## 3.1 Read in the data
 
 We start forecasting by first looking at the historic data - called the
-‘targets’. These data are available with a 5 day delay (latency). Here
-is how you read in the data from the targets file available from the EFI
-server.
+`targets` (`targets` = what we are trying to forecast). These data are
+available with a 5 day delay (latency). Here is how you read in the data
+from the targets file available from the EFI server.
 
 ``` r
 #read in the targets data
@@ -256,26 +237,26 @@ challgenge](NEON_forecast_challenge_workshop_terrestrial_files/figure-markdown_g
 
 We can think about what type of models might be useful to predict these
 variables at these sites. Below are descriptions of three simple models
-which have been constructed to get you started forecasting:
+to get you started forecasting:
 
 -   We could use information about recent conditions to predict the
-    future. What is happening today is usually a good predictor of what
+    future. What is happening today might be a good predictor of what
     will happen tomorrow.
--   And we could think about what the historic data tells us about this
-    time of year. Is this time of year likely to be similar the same
-    period last year?
--   We could also look at the variable’s relationship(s) with other
-    variables. Could we use existing forecasts about the weather to
+-   What does the historic data tell us about this time of year? Is this
+    time of year likely to be similar the same period last year?
+-   We could also look at the variable’s relationship with other
+    variables. Could we use existing forecasts of the weather to
     generate forecasts about terrestrial fluxes?
 
 # 4 Introducing co-variates
 
 One important step to overcome when thinking about generating forecasts
 is how to include co-variates in the model. A forecast of NEE, for
-example, may be benefit from information about past and future weather.
-The `neon4cast` challenge package includes functions for downloading
-past and future NOAA weather forecasts for all of the NEON sites. The 3
-types of data are as follows:
+example, may benefit from information about past and future weather. The
+Challenge organisers have compiled past and future NOAA weather
+forecasts for all of the NEON sites that are available for teams to use
+and accessed using the `neon4cast` package (which was installed above).
+The 3 types of data are as follows:
 
 -   stage_1: raw forecasts - 31 member ensemble forecasts at 3 hr
     intervals for the first 10 days, and 6 hr intervals for up to 35
@@ -291,10 +272,10 @@ types of data are as follows:
     most accurate). You can download this “stacked” NOAA product using
     `neon4cast::noaa_stage3()`.
 
-These functions create a connection to the dataset hosted on the
-eco4cast server. To download the data you have to tell the function to
-`collect()` it. These data set can be subsetted and filtered using
-`dplyr` functions prior to download to limit the memory usage.
+These `neon4cast` functions create a connection to the data that is
+hosted on the eco4cast server. To download the data you have to tell the
+function to `collect()` it. These data set can be subsetted and filtered
+using `dplyr` functions prior to download to limit the memory usage.
 
 You can read more about the NOAA forecasts available for the NEON sites
 [here:](https://projects.ecoforecast.org/neon4cast-docs/Shared-Forecast-Drivers.html)
@@ -353,8 +334,8 @@ noaa_past_example[1:10,]
 
 This is a stacked ensemble forecast of the one day ahead hourly
 forecasts. To get an estimate of the historic conditions we can take a
-mean of these ensembles. We will also need to convert the temperatures
-to Celsius from Kelvin.
+mean of these ensembles. We will also convert the temperatures to
+Celsius from Kelvin.
 
 ``` r
 # aggregate the past to mean values
@@ -382,7 +363,7 @@ head(noaa_past_mean_example)
     ## 6 2020-09-30 HARV               13.1      117.
 
 We can then look at the future weather forecasts in the same way but
-using the `noaa_stage2()`. The forecast becomes available from NOAA at
+using the `noaa_stage2()`. The forecasts become available from NOAA at
 5am UTC the following day, so we take the air temperature and shortwave
 forecast from yesterday (`noaa_date`) to make the NEE forecasts. Then we
 can use the weather forecast ensembles to produce uncertainty in the NEE
@@ -396,7 +377,7 @@ forecast by forecasting multiple (31) future conditions.
 forecast_date <- Sys.Date() 
 noaa_date <- forecast_date - days(1)
 
-df_future <- neon4cast::noaa_stage2()
+df_future <- neon4cast::noaa_stage2(start_date = as.character(noaa_date))
 
 variables <- c("air_temperature", "surface_downwelling_shortwave_flux_in_air")
 
@@ -405,7 +386,7 @@ noaa_future_example <- df_future |>
                 datetime >= forecast_date,
                 site_id %in% example_site,
                 variable %in% variables,
-                # Only need a 30 day horizon (31 *24 , today + 30 days)
+                # Only need a 30 day horizon ( today + 30 days, 31 *24)
                 horizon < 744,
                 # ensemble member 31 only goes to 16 days
                 parameter < 31) |> 
@@ -413,22 +394,22 @@ noaa_future_example <- df_future |>
 noaa_future_example
 ```
 
-    ## # A tibble: 43,200 × 13
+    ## # A tibble: 43,200 × 12
     ##    site_id prediction variable      height horizon parameter reference_datetime 
     ##    <chr>        <dbl> <chr>         <chr>    <dbl>     <int> <dttm>             
-    ##  1 HARV          0    surface_down… surfa…      24         1 2023-07-12 00:00:00
-    ##  2 HARV          0    surface_down… surfa…      25         1 2023-07-12 00:00:00
-    ##  3 HARV          0    surface_down… surfa…      26         1 2023-07-12 00:00:00
-    ##  4 HARV          0    surface_down… surfa…      27         1 2023-07-12 00:00:00
-    ##  5 HARV          0    surface_down… surfa…      28         1 2023-07-12 00:00:00
-    ##  6 HARV          0    surface_down… surfa…      29         1 2023-07-12 00:00:00
-    ##  7 HARV          0    surface_down… surfa…      30         1 2023-07-12 00:00:00
-    ##  8 HARV          0    surface_down… surfa…      31         1 2023-07-12 00:00:00
-    ##  9 HARV          0    surface_down… surfa…      32         1 2023-07-12 00:00:00
-    ## 10 HARV          4.25 surface_down… surfa…      33         1 2023-07-12 00:00:00
+    ##  1 HARV             0 surface_down… surfa…      24         1 2023-07-19 00:00:00
+    ##  2 HARV             0 surface_down… surfa…      25         1 2023-07-19 00:00:00
+    ##  3 HARV             0 surface_down… surfa…      26         1 2023-07-19 00:00:00
+    ##  4 HARV             0 surface_down… surfa…      27         1 2023-07-19 00:00:00
+    ##  5 HARV             0 surface_down… surfa…      28         1 2023-07-19 00:00:00
+    ##  6 HARV             0 surface_down… surfa…      29         1 2023-07-19 00:00:00
+    ##  7 HARV             0 surface_down… surfa…      30         1 2023-07-19 00:00:00
+    ##  8 HARV             0 surface_down… surfa…      31         1 2023-07-19 00:00:00
+    ##  9 HARV             0 surface_down… surfa…      32         1 2023-07-19 00:00:00
+    ## 10 HARV             0 surface_down… surfa…      33         1 2023-07-19 00:00:00
     ## # ℹ 43,190 more rows
-    ## # ℹ 6 more variables: forecast_valid <chr>, datetime <dttm>, longitude <dbl>,
-    ## #   latitude <dbl>, family <chr>, start_date <chr>
+    ## # ℹ 5 more variables: forecast_valid <chr>, datetime <dttm>, longitude <dbl>,
+    ## #   latitude <dbl>, family <chr>
 
 These forecasts are hourly and we are interested in using daily mean air
 temperature and shortwave for NEE forecast generation.
@@ -452,16 +433,16 @@ noaa_future_daily_example
     ## # Groups:   datetime, site_id, parameter [900]
     ##    datetime   site_id air_temperature shortwave parameter
     ##    <date>     <chr>             <dbl>     <dbl>     <int>
-    ##  1 2023-07-13 HARV               22.2      257.         1
-    ##  2 2023-07-13 HARV               20.8      186.         2
-    ##  3 2023-07-13 HARV               19.6      169.         3
-    ##  4 2023-07-13 HARV               21.5      249.         4
-    ##  5 2023-07-13 HARV               21.4      228.         5
-    ##  6 2023-07-13 HARV               22.1      247          6
-    ##  7 2023-07-13 HARV               20.5      144.         7
-    ##  8 2023-07-13 HARV               22.3      247.         8
-    ##  9 2023-07-13 HARV               21.1      208.         9
-    ## 10 2023-07-13 HARV               21.4      195.        10
+    ##  1 2023-07-20 HARV               21.0      292.         1
+    ##  2 2023-07-20 HARV               20.9      288.         2
+    ##  3 2023-07-20 HARV               20.7      310.         3
+    ##  4 2023-07-20 HARV               20.3      318.         4
+    ##  5 2023-07-20 HARV               21.1      291.         5
+    ##  6 2023-07-20 HARV               20.8      264.         6
+    ##  7 2023-07-20 HARV               20.8      280          7
+    ##  8 2023-07-20 HARV               21.0      312.         8
+    ##  9 2023-07-20 HARV               20.1      276          9
+    ## 10 2023-07-20 HARV               21.1      286.        10
     ## # ℹ 890 more rows
 
 Now we have a timeseries of historic data and a 30 member ensemble
@@ -496,22 +477,23 @@ tail(targets_lm_example)
 ```
 
     ## # A tibble: 6 × 5
-    ##   datetime   site_id    nee air_temperature shortwave
-    ##   <date>     <chr>    <dbl>           <dbl>     <dbl>
-    ## 1 2023-06-29 HARV     -5.91            19.1      267.
-    ## 2 2023-06-30 HARV    -11.2             20.7      284.
-    ## 3 2023-07-01 HARV    -11.1             20.6      292.
-    ## 4 2023-07-04 HARV     -3.30            20.5      181.
-    ## 5 2023-07-05 HARV    -10.1             23.1      328.
-    ## 6 2023-07-06 HARV     -9.07            24.0      426.
+    ##   datetime   site_id   nee air_temperature shortwave
+    ##   <date>     <chr>   <dbl>           <dbl>     <dbl>
+    ## 1 2023-07-07 HARV    -5.19            23.6      340.
+    ## 2 2023-07-08 HARV    -7.33            22.8      290.
+    ## 3 2023-07-09 HARV    -4.06            20.6      123.
+    ## 4 2023-07-11 HARV    -9.10            21.2      331 
+    ## 5 2023-07-12 HARV    -8.70            23.4      306.
+    ## 6 2023-07-13 HARV    -9.39            22.4      301.
 
 To fit the linear model we use the base R `lm()` but there are also
 methods to fit linear (and non-linear) models in the `fable::` package.
 You can explore the
 [documentation](https://otexts.com/fpp3/regression.html) for more
-information on the `fable::TSLM()` function. We can fit a separate
-linear model for each site. For example, at HARV forest (HARV), this
-would look like:
+information on the `fable::TSLM()` function.
+
+We can fit a separate linear model for each site. For example, at HARV
+forest (HARV), this would look like:
 
 ``` r
 #Fit linear model based on past data: NEE = a * air temperature + b * shortwave
@@ -550,7 +532,7 @@ forecasted_nee <- fit$coefficients[1] +
   # select(model_id, datetime, reference_datetime, site_id, family, parameter, variable, prediction)
 ```
 
-A forecast!!
+### 5.0.1 A forecast!!
 
 We can loop through this workflow for each site to create a site-wise
 forecast of NEE based on a linear model and each forecasted air
@@ -564,7 +546,7 @@ then bind them together to submit as one forecast.
 5.  Bind this all together…
 
 Note: This loop takes a while to execute so start it running as soon as
-possible…
+possible in the workshop period …
 
 ``` r
 # Create the connections to data products
@@ -579,10 +561,10 @@ df_past <- neon4cast::noaa_stage3()
 ``` r
 forecast_date <- Sys.Date() 
 noaa_date <- forecast_date - days(1)
-df_future <- neon4cast::noaa_stage2()
+df_future <- neon4cast::noaa_stage2(start_date = as.character(noaa_date))
 ```
 
-    ## establishing connection to stage2/parquet/0 at data.ecoforecast.org ...
+    ## establishing connection to stage2/parquet/0/2023-07-19 at data.ecoforecast.org ...
     ## connected! Use dplyr functions to filter and summarise.
     ## Then, use collect() to read result into R
 
@@ -594,20 +576,21 @@ variables <- c("air_temperature", "surface_downwelling_shortwave_flux_in_air")
 lm_forecast <- NULL
 model_fit <- NULL
 
-loop_sites <- 1:5 #1:length(site_data$field_site_id)
 
 ## Stash NOAA locally. This will speed up the access to NOAA by writing a local copy that we query
-df_past |> 
+df_past |>
     dplyr::filter(datetime >= ymd('2017-01-01'),
-                  variable %in% variables) |> 
+                  variable %in% variables,
+                  site_id %in% site_data$field_site_id) |>
     arrow::write_dataset("noaa_past", partitioning="site_id")
-    
-df_future |> 
+
+df_future |>
     dplyr::filter(reference_datetime == noaa_date,
                   datetime >= forecast_date,
                   variable %in% variables,
+                  site_id %in% site_data$field_site_id,
                   horizon < 744,
-                  parameter < 31) |> 
+                  parameter < 31) |>
     arrow::write_dataset("noaa_future", partitioning="site_id")
 
 
@@ -616,7 +599,7 @@ for(i in 1:length(site_data$field_site_id)) {
   site <- site_data$field_site_id[i]
   
   # 1. Get historic NOAA data
-  noaa_past <- arrow::open_dataset("noaa_past") |> 
+  noaa_past <- arrow::open_dataset('noaa_past') |> 
     dplyr::filter(site_id %in% site,
                   datetime >= ymd('2017-01-01'),
                   variable %in% variables) |> 
@@ -637,10 +620,10 @@ for(i in 1:length(site_data$field_site_id)) {
   
   #2. Get future NOAA data
   # Download the stage2 data
-  noaa_future <- arrow::open_dataset("noaa_future") |> 
+  noaa_future <- arrow::open_dataset('noaa_future') |> 
     dplyr::filter(reference_datetime == noaa_date,
                   datetime >= forecast_date,
-                  site_id %in% site,
+                  site_id == site,
                   variable %in% variables,
                   horizon < 744,
                   parameter < 31) |> 
@@ -805,23 +788,24 @@ Looking back at the forecasts we produced:
 For an ensemble forecast the documentation specifies the following
 columns:
 
--   `datetime`: forecast timestamp for each time step
+-   `datetime`: forecast time stamp for each time step
 -   `reference_datetime`: The start of the forecast; this should be 0
     times steps in the future. This should only be one value of
     reference_datetime in the file
 -   `site_id`: NEON code for site
--   `family`: name of probability distribution that is described by the
-    parameter values in the parameter column; only `normal` or
-    `ensemble` are currently allowed.
--   `parameter`: integer value for forecast replicate (from the `.rep`
-    in fable output);
+-   `family`: name of forecast type described by the parameter values in
+    the parameter column; only `normal` or `ensemble` are currently
+    allowed. Using the NOAA weather forecasts we have generated an
+    `ensemble` forecast
+-   `parameter`: integer value for forecast replicate
 -   `variable`: standardized variable name from the theme
--   `prediction`: forecasted value
+-   `prediction`: forecast value
 -   `model_id`: model name (no spaces)
 
 We need to make sure the dataframe is in the correct format and then we
 can submit this to the challenge as well! This is an ensemble forecast
-(specified in the `family` column).
+(specified in the `family` column). These are the EFI forecast
+`standards`.
 
 ``` r
 # Remember to change the model_id when you make changes to the model structure!
@@ -851,7 +835,7 @@ for submitting, scoring and reading forecasts:
     to the server
 
 The file name needs to be in the format
-theme-reference_datetime-model_id
+`theme-reference_datetime-model_id`
 
 ``` r
 # Start by writing the forecast to file
@@ -862,15 +846,18 @@ forecast_file_1 <- paste(theme, date, forecast_name_1, sep = '-')
 forecast_file_1
 ```
 
-    ## [1] "terrestrial_daily-2023-07-12-ESA_example.csv"
+    ## [1] "terrestrial_daily-2023-07-19-ESA_example.csv"
 
 ``` r
-write_csv(lm_forecast_EFI, forecast_file_1)
+if (!dir.exists('Forecasts')) {
+  dir.create('Forecasts')
+}
+write_csv(lm_forecast_EFI, file.path('Forecasts', forecast_file_1))
 
-neon4cast::forecast_output_validator(forecast_file_1)
+neon4cast::forecast_output_validator(file.path('Forecasts', forecast_file_1))
 ```
 
-    ## terrestrial_daily-2023-07-12-ESA_example.csv
+    ## Forecasts/terrestrial_daily-2023-07-19-ESA_example.csv
 
     ## ✔ file name is correct
     ## ✔ forecasted variables found correct variable + prediction column
@@ -886,7 +873,7 @@ neon4cast::forecast_output_validator(forecast_file_1)
 
 ``` r
 # can uses the neon4cast::forecast_output_validator() to check the forecast is in the right format
-neon4cast::submit(forecast_file = forecast_file_1,
+neon4cast::submit(forecast_file = file.path('Forecasts', forecast_file_1),
                   ask = TRUE) # if ask = T (default), it will produce a pop-up box asking if you want to submit
 ```
 
@@ -895,9 +882,9 @@ temperature and solar radiation? Would some non-linear relationship be
 better? What about using maximum shortwave to predict NEE? Or including
 additional parameters?
 
-## 5.3 TASKS
+## 5.3 Workshop tasks
 
-Possible modifications to Model 1 - simple linear model:
+Possible modifications to the simple linear model:
 
 -   Include additional NOAA co-variates in the linear model (remember to
     ‘collect’ and subset the right data from NOAA)
@@ -907,7 +894,7 @@ Possible modifications to Model 1 - simple linear model:
 -   Include a lag in the predictors
 -   Include additional sources of uncertainty - what is the error of the
     residuals and what does this indicate about the uncertainty in the
-    model.
+    model?
 
 Remember to change the `model_id` so we can differentiate different
 forecasts!
@@ -935,15 +922,20 @@ One of the most exciting parts of near-term ecological forecasting is
 the iterative nature of it. Submitting a brand new forecast everyday
 with updated models etc. will test how well your model does over
 different days. You can also continue to tune parameters, update initial
-conditions, or modify the model as new data are collected.
+conditions, or modify the model as new data are collected. There are
+[detailed instructions](https://github.com/eco4cast/neon4cast-example)
+about setting up an Action in Github as well as a template repository
+once you are happy with your forecast model. You can take your code
+developed in this workshop with only some minor adjustment and have an
+automated iterative forecast. Just modify the `forecast_model.R`!
 
 ## 5.6 See how your forecasts perform
 
 During this workshop, we have gone through a simple forecast submission
 workflow. This submits a standardised format forecast to an AWS (Amazon
-Web Services) bucket which will automatically undergo ‘scoring’,
+Web Services) bucket which will automatically undergo `scoring`,
 comparing your prediction (and the associated uncertainty) with the
-observations collected by NEON to produce score metrics. These scores
+observations collected by NEON to produce `score` metrics. These scores
 tell us how well each model was able to reproduce the observations, with
 lower scores indicating higher performance (and lower error). See
 [here]() for information about how the scores are calculated.
