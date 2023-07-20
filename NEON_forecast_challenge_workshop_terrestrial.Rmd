@@ -337,7 +337,7 @@ forecasted_nee <- fit$coefficients[1] +
   # select(model_id, datetime, reference_datetime, site_id, family, parameter, variable, prediction)
 ```
 
-A forecast!!
+### A forecast!!
 
 We can loop through this workflow for each site to create a site-wise forecast of NEE based on a linear model and each forecasted air temperature and shortwave. We can run this forecast for each site and then bind them together to submit as one forecast. 
  
