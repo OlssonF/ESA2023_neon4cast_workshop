@@ -16,8 +16,6 @@ The following packages need to be installed using the following code.
 
 ```{r}
 install.packages('remotes')
-install.packages('fpp3') # package for applying simple forecasting methods
-install.packages('tsibble') # package for dealing with time series data sets and tsibble objects
 install.packages('tidyverse') # collection of R packages for data manipulation, analysis, and visualisation
 install.packages('lubridate') # working with dates and times
 remotes::install_github('eco4cast/neon4cast') # package from NEON4cast challenge organisers to assist with forecast building and submission
