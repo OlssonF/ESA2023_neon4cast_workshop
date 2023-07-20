@@ -1,7 +1,9 @@
 # ESA 2023 - Introduction to the NEON Forecasting Challenge 
-These materials have been developed for the 2023 Ecological Society of America meeting in Portland, Oregon as an introduction to the Ecological Forecasting Initiative and NEON Forecasting Challenge. The materials will take you through a basic workflow and will get you started on participating in the Challenge. These materials comprise of an R markdown script that generate a simple forecast of daily terrestrial fluxes of carbon and evaporation for the terrestrial NEON (National Ecological Observatory Networks) sites.
+
+These materials have been developed for the 2023 Ecological Society of America meeting in Portland, Oregon as an introduction to the Ecological Forecasting Initiative and NEON Forecasting Challenge. The materials will take you through a basic workflow and will get you started on participating in the Challenge. These materials comprise of an R markdown script that generate a simple forecast of daily terrestrial fluxes of carbon and evaporation for the terrestrial NEON (National Ecological Observatory Networks) sites.  The development of these materials has been supported by NSF grants DEB-1926388 and DBI-1933016.
 
 ## Getting started
+
 1. Set up your R environment (we will be using R and R Studio)
 2. Download code, clone, or fork (recommended) the repository
 3. Work through the example
@@ -24,6 +26,7 @@ remotes::install_github('eco4cast/neon4cast') # package from NEON4cast challenge
 Make sure to restart your R session after installing any new packages!
 
 ### 2. Fork or clone the Github repository or download the code
+
 There are 3 options for getting the code locally so that you can run it, depending on your experience with Github/Git you can do one of the following 
 
 1. _Fork_ the repository to your Github and then clone the repository from your Github repository to a local RStudio project. This will allow you to modify the scripts and push it back to your Github. 
@@ -48,5 +51,6 @@ There are 3 options for getting the code locally so that you can run it, dependi
 More information on forking and cloning in R can be found at [happygitwithr](https://happygitwithr.com/fork-and-clone.html), a great resource to get you started using version control with RStudio. 
 
 ### 3. Work through the example
+
 Step through the code chunks to take you through a simple forecasting workflow and submit your first real-time forecast to the Challenge!
-More information on the Challenge can be found [here](https://projects.ecoforecast.org/neon4cast-docs/)
+More information on the Challenge can be found in [Thomas et al. 2023](https://doi.org/10.1002/fee.2616) and the associated [documention](https://projects.ecoforecast.org/neon4cast-docs/)
