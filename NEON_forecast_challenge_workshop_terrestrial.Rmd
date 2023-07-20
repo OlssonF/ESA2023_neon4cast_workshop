@@ -36,9 +36,8 @@ remotes::install_github('eco4cast/neon4cast') # package from NEON4cast challenge
 
 Additionally, R version 4.2 is required to run the `neon4cast` package. It's also worth checking your Rtools is up to date and compatible with R 4.2, see (https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html). 
 
-```{r}
+```{r warning=F}
 version$version.string
-
 
 library(tidyverse)
 library(lubridate)
@@ -50,7 +49,7 @@ Note: if you are familiar with and comfortable using Docker containers you can r
 
 # Introduction to NEON forecast challenge
 
-The EFI RCN NEON Forecast Challenge asks the scientific community to produce ecological forecasts of future conditions at NEON sites by leveraging NEON's open data products. The Challenge is split into five themes that span aquatic and terrestrial systems, and population, community, and ecosystem processes across a broad range of ecoregions. We are excited to use this Challenge to learn more about the predictability of ecological processes by forecasting NEON data before it is collected.  
+The EFI RCN NEON Forecast Challenge provides a platform for the scientific community to produce ecological forecasts of future conditions at NEON sites by leveraging NEON's open data products. The Challenge is split into five themes that span aquatic and terrestrial systems, and population, community, and ecosystem processes across a broad range of ecoregions. We are excited to use this Challenge to learn more about the predictability of ecological processes by forecasting NEON data before it is collected.  
   
 Which modeling frameworks, mechanistic processes, and statistical approaches best capture community, population, and ecosystem dynamics? These questions are answerable by a community generating a diverse array of forecasts. The Challenge is open to any individual or team from anywhere around the world that wants to submit forecasts. Sign up [here.](https://projects.ecoforecast.org/neon4cast-docs/Participation.html). 
 
@@ -66,9 +65,9 @@ Today we will focus on forecasts of net ecosystem exchange of CO2 (NEE) at a dai
 
 ## Submission requirements
 
-For the Challenge, forecasts must include quantified `uncertainty.` The file can represent uncertainty using an `ensemble` forecast (multiple realizations of future conditions) or a `distribution` forecast (with mean and standard deviation), specified in the family and parameter columns of the forecast file. 
+For the Challenge, forecasts must include quantified `uncertainty`. The forecast can represent uncertainty using an `ensemble` forecast (multiple realizations of future conditions) or a `distribution` forecast (with mean and standard deviation), specified in the family and parameter columns of the forecast file. 
 
-For an ensemble forecast, the `family` column uses the word `ensemble` to designate that it is a ensemble forecast and the parameter column is the ensemble member number (1, 2, 3 …).  For a distribution forecast, the `family` column uses the word `normal` to designate a normal distribution and the parameter column must have the words mu and sigma for each forecasted variable, site_id, and datetime. For forecasts that don't have a normal distribution we recommend using the ensemble format and sampling from your non-normal distribution to generate a set of ensemble members that represents your distribution. I will go through examples of both `ensemble` and `normal` forecasts as examples. 
+For an ensemble forecast, the `family` column uses the word `ensemble` to designate that it is a ensemble forecast and the parameter column is the ensemble member number (1, 2, 3 …).  For a distribution forecast, the `family` column uses the word `normal` to designate a normal distribution and the parameter column must have the words `mu` and `sigma` for each forecasted variable, site_id, and datetime. For forecasts that don't have a normal distribution we recommend using the ensemble format and sampling from your non-normal distribution to generate a set of ensemble members that represents your distribution. 
 
 The full list of required columns and format can be found in the [Challenge documentation](https://projects.ecoforecast.org/neon4cast-docs/Submission-Instructions.html).
 
@@ -146,21 +145,21 @@ targets %>%
 
 ```
 
-We can think about what type of models might be useful to predict these variables at these sites. Below are descriptions of three simple models which have been constructed to get you started forecasting:
+We can think about what type of models might be useful to predict these variables at these sites. Below are descriptions of three simple models to get you started forecasting:
 
-* We could use information about recent conditions to predict the future. What is happening today is usually a good predictor of what will happen tomorrow.
-* And we could think about what the historic data tells us about this time of year. Is this time of year likely to be similar the same period last year? 
-* We could also look at the variable's relationship(s) with other variables. Could we use existing forecasts about the weather to generate forecasts about terrestrial fluxes?
+* We could use information about recent conditions to predict the future. What is happening today might be a good predictor of what will happen tomorrow.
+* What does the historic data tell us about this time of year? Is this time of year likely to be similar the same period last year? 
+* We could also look at the variable's relationship with other variables. Could we use existing forecasts of the weather to generate forecasts about terrestrial fluxes?
 
 # Introducing co-variates
 
-One important step to overcome when thinking about generating forecasts is how to include co-variates in the model. A forecast of NEE, for example, may be benefit from information about past and future weather. The `neon4cast` challenge package includes functions for downloading past and future NOAA weather forecasts for all of the NEON sites. The 3 types of data are as follows:
+One important step to overcome when thinking about generating forecasts is how to include co-variates in the model. A forecast of NEE, for example, may benefit from information about past and future weather. The Challenge organisers have compiled past and future NOAA weather forecasts for all of the NEON sites that are available for teams to use and accessed using the `neon4cast` package (which was installed above). The 3 types of data are as follows:
 
 * stage_1: raw forecasts - 31 member ensemble forecasts at 3 hr intervals for the first 10 days, and 6 hr intervals for up to 35 days at the NEON sites.
 * stage_2: a processed version of Stage 1 in which fluxes are standardized to per second rates, fluxes and states are interpolated to 1 hour intervals and variables are renamed to match conventions. We recommend this for obtaining future weather by using `neon4cast::noaa_stage2()`. Future weather forecasts include a 30-member ensemble of equally likely future weather conditions.
 * stage_3: can be viewed as the "historical" weather and is combination of day 1 weather forecasts (i.e., when the forecasts are most accurate). You can download this “stacked” NOAA product using `neon4cast::noaa_stage3()`.
 
-These functions create a connection to the dataset hosted on the eco4cast server. To download the data you have to tell the function to `collect()` it. These data set can be subsetted and filtered using `dplyr` functions prior to download to limit the memory usage.
+These `neon4cast` functions create a connection to the data that is hosted on the eco4cast server. To download the data you have to tell the function to `collect()` it. These data set can be subsetted and filtered using `dplyr` functions prior to download to limit the memory usage.
 
 You can read more about the NOAA forecasts available for the NEON sites [here:](https://projects.ecoforecast.org/neon4cast-docs/Shared-Forecast-Drivers.html)
 
@@ -197,7 +196,7 @@ noaa_past_example <- df_past |>
 noaa_past_example[1:10,]
 ```
 
-This is a stacked ensemble forecast of the one day ahead hourly forecasts. To get an estimate of the historic conditions we can take a mean of these ensembles. We will also need to convert the temperatures to Celsius from Kelvin.
+This is a stacked ensemble forecast of the one day ahead hourly forecasts. To get an estimate of the historic conditions we can take a mean of these ensembles. We will also convert the temperatures to Celsius from Kelvin.
 
 ```{r}
 # aggregate the past to mean values
@@ -214,7 +213,7 @@ noaa_past_mean_example <- noaa_past_example |>
 head(noaa_past_mean_example)
 ```
 
-We can then look at the future weather forecasts in the same way but using the `noaa_stage2()`. The forecast becomes available from NOAA at 5am UTC the following day, so we take the air temperature and shortwave forecast from yesterday (`noaa_date`) to make the NEE forecasts. Then we can use the weather forecast ensembles to produce uncertainty in the NEE forecast by forecasting multiple (31) future conditions. 
+We can then look at the future weather forecasts in the same way but using the `noaa_stage2()`. The forecasts become available from NOAA at 5am UTC the following day, so we take the air temperature and shortwave forecast from yesterday (`noaa_date`) to make the NEE forecasts. Then we can use the weather forecast ensembles to produce uncertainty in the NEE forecast by forecasting multiple (31) future conditions. 
 
 ### Download future weather forecasts
 
@@ -233,7 +232,7 @@ noaa_future_example <- df_future |>
                 datetime >= forecast_date,
                 site_id %in% example_site,
                 variable %in% variables,
-                # Only need a 30 day horizon (31 *24 , today + 30 days)
+                # Only need a 30 day horizon ( today + 30 days, 31 *24)
                 horizon < 744,
                 # ensemble member 31 only goes to 16 days
                 parameter < 31) |> 
@@ -298,7 +297,9 @@ tail(targets_lm_example)
 ```
 
 
-To fit the linear model we use the base R `lm()` but there are also methods to fit linear (and non-linear) models in the `fable::` package. You can explore the [documentation](https://otexts.com/fpp3/regression.html) for more information on the `fable::TSLM()` function. We can fit a separate linear model for each site. For example, at HARV forest (HARV), this would look like:
+To fit the linear model we use the base R `lm()` but there are also methods to fit linear (and non-linear) models in the `fable::` package. You can explore the [documentation](https://otexts.com/fpp3/regression.html) for more information on the `fable::TSLM()` function.
+
+We can fit a separate linear model for each site. For example, at HARV forest (HARV), this would look like:
 
 ```{r, eval = T}
 
@@ -337,7 +338,7 @@ forecasted_nee <- fit$coefficients[1] +
   # select(model_id, datetime, reference_datetime, site_id, family, parameter, variable, prediction)
 ```
 
-A forecast!!
+__A forecast!!__
 
 We can loop through this workflow for each site to create a site-wise forecast of NEE based on a linear model and each forecasted air temperature and shortwave. We can run this forecast for each site and then bind them together to submit as one forecast. 
  
@@ -363,7 +364,6 @@ variables <- c("air_temperature", "surface_downwelling_shortwave_flux_in_air")
 lm_forecast <- NULL
 model_fit <- NULL
 
-loop_sites <- 1:5 #1:length(site_data$field_site_id)
 
 ## Stash NOAA locally. This will speed up the access to NOAA by writing a local copy that we query
 df_past |> 
