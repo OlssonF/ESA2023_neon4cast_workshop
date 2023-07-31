@@ -1,6 +1,6 @@
 # ESA 2023 - Introduction to the NEON Forecasting Challenge 
 
-These materials have been developed for the 2023 Ecological Society of America meeting in Portland, Oregon as an introduction to the Ecological Forecasting Initiative and NEON Forecasting Challenge. The materials will take you through a basic workflow and will get you started on participating in the Challenge. These materials comprise of an R markdown script that generate a simple forecast of daily terrestrial fluxes of carbon and evaporation for the terrestrial NEON (National Ecological Observatory Networks) sites.  The development of these materials has been supported by NSF grants DEB-1926388 and DBI-1933016.
+These materials have been developed for the 2023 Ecological Society of America meeting in Portland, Oregon as an introduction to the Ecological Forecasting Initiative and NEON Forecasting Challenge. The materials will take you through a basic workflow and will get you started on participating in the Challenge. These materials comprise of an R markdown script that generate a simple forecast of daily terrestrial fluxes of carbon and evaporation for the terrestrial NEON (National Ecological Observatory Networks) sites. Learn more about the data we will be using from this short [video](https://www.youtube.com/watch?v=CR4Anc8Mkas). The development of these materials has been supported by NSF grants DEB-1926388 and DBI-1933016.
 
 ## Getting started
 
