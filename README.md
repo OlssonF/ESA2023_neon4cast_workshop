@@ -56,5 +56,20 @@ Step through the code chunks to take you through a simple forecasting workflow a
 
 More information on the Challenge can be found in [Thomas et al. 2023](https://doi.org/10.1002/fee.2616) and the associated [documention](https://projects.ecoforecast.org/neon4cast-docs/)
 
-Note: if you are familiar with and comfortable using Docker containers you can run these materials without any package installation by using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. 
+### Running a docker container
+If you are familiar with and comfortable using Docker containers you can run these materials without any package installation by using the `eco4cast/rocker-neon4cast` Docker image which has all the packages pre-installed in a stable Linux environment. 
 
+1. Launch Docker Desktop (either from the Command Line or by starting the GUI) 
+2. At the command line run the following command which tells docker to `run` the container with the name `eco4cast/rocker-neon4cast` that has all the packages and libraries installed already. The `PASSWORD=yourpassword` sets a simple password that you will use to open the container. The `-ti` option starts both a terminal and an interactive session. 
+```
+docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 eco4cast/rocker-neon4cast
+```
+This can take a few minutes to download and install. It will be quicker the next time you launch it.  
+
+3. Open up a web browser and navigate to `http://localhost:8787/`
+4. Enter the username: `rstudio` and password: `yourpassword`
+5. You should see a R Studio interface with all the packages etc. pre-installed and ready to go.
+
+You can close this localhost window (and then come back to it) but if you close the container from Docker (turn off your computer etc.) any changes will be lost unless you push them to Github or exported to your local environment.
+
+Then follow the instructions for Getting the Code above (`2. Get the Code`). 
