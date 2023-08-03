@@ -38,8 +38,7 @@ There are 3 options for getting the code locally so that you can run it, dependi
 - Open the .Rmd file
 
 2. _Clone_ the workshop repository to a local RStudio project. Your local workspace will be set up and you can commit changes locally but they won't be pushed back to the Github repository.
-- Find the fork button in the top left of the webpage --> Create Fork. 
-- Then use the <> Code button to copy the HTTPS link.
+- Use the <> Code button in the workshop repository to copy the HTTPS link.
 - In RStudio go to New Project --> Version Control --> Git. 
 - Paste the HTTPS link in the Repository URL space, and choose a suitable location for your local repository --> Create Project. 
 - Open the .Rmd file
